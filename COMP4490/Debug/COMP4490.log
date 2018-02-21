@@ -3,11 +3,16 @@ c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\fltk\include\fl\o
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\fltk\include\fl\obj_loader.h(655): warning C4018: '<': signed/unsigned mismatch
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\fltk\include\fl\obj_loader.h(661): warning C4018: '<': signed/unsigned mismatch
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\fltk\include\fl\obj_loader.h(915): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(62): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(63): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(64): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(65): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(113): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(112): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(233): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(124): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(128): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(250): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(252): warning C4101: 'q': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(251): warning C4101: 'f': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(252): warning C4101: 's': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(251): warning C4101: 'x': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(252): warning C4101: 'h': unreferenced local variable
   COMP4490.vcxproj -> C:\Users\Owner\Desktop\School\COMP 4490\A1\comp4490a1\comp4490\build\comp4490.exe

@@ -58,3 +58,16 @@ public:
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
 };
 
+
+
+//======================================================================
+// Shadow Attenuation
+//    Code for Shadow Attenuation
+//======================================================================
+class ShadowAtt {
+public:
+	glm::vec3 pos, size;
+	ShadowAtt(void);
+	ShadowAtt(glm::vec3 _pos, glm::vec3 _size);
+	~ShadowAtt();
+};

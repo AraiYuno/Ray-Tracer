@@ -47,9 +47,9 @@ void renderSI(void * window, int width, int height)
 	//meshArr[9] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
 
 	meshArr[5] = new Triangle(glm::vec3(2, 2, -17), glm::vec3(-2, 2, -15), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // EMERALD TRIANGLE // u -> CAP
-	meshArr[6] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(-0.5, 2, -13), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // v -> ABP
-	meshArr[7] = new Triangle(glm::vec3(-0.5, 2, -13), glm::vec3(2, 2, -17), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // w -> BCP
-	meshArr[8] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(-0.5 , 2, -13), glm::vec3(-2, 2, -17), glm::vec3(67, 208, 84)); // ABC -> base
+	meshArr[6] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(2, 2, -13), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // v -> ABP
+	meshArr[7] = new Triangle(glm::vec3(2, 2, -13), glm::vec3(2, 2, -17), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // w -> BCP
+	meshArr[8] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(2 , 2, -13), glm::vec3(2, 2, -17), glm::vec3(67, 208, 84)); // ABC -> base
 
 
 	glm::vec3 **image = new glm::vec3*[width];
@@ -110,8 +110,7 @@ void renderSI(void * window, int width, int height)
 				// CHECK IF THE LIGHT HITS THE MESHES
 				int lightHitsMesh = -1;
 				for (int j = 0; j < sizeof(meshArr) / sizeof(meshArr[0]); j++) {
-					bool lightHit = meshArr[j]->Intersection(p0 + (-1e-5f * normal), lightRay, &t0);
-
+					bool lightHit = meshArr[j]->Intersection(p0 + (1e-4f * normal), lightRay, &t0);
 
 					if (lightHit && t0 < minT) {
 						minT = t0;
@@ -209,7 +208,8 @@ glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse,
 	*_shininess = 150;  // to give a glow effect
 	*_diffuse = colour;
 	*_specular = glm::vec3(30, 30, 30);
-	return glm::normalize(_p0 - pos);
+	N = glm::normalize(_p0 - pos);
+	return N;
 }
 
 
@@ -254,49 +254,46 @@ bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float
 	glm::vec3 edge1 = b - a;
 	glm::vec3 edge2 = c - a;
 
-	//h = glm::cross(_rayDirection, edge2);
-	//x = glm::dot(edge1, h);
-	//if (x > -EPSILON && x < EPSILON)
-	//	return false;
-
-	//f = 1 / x;
-	//s = _rayOrigin - a;
-	//u = f * (glm::dot(s, h));
-	//if (u < 0.0 || u > 1.0)
-	//	return false;
-
-	//q = glm::cross(s, edge1);
-	//v = f * (glm::dot(_rayDirection, q));
-	//if (v < 0.0 || u + v > 1.0)
-	//	return false;
-	//w = 1 - u - v;
-	//// By now we can surely compute t* to check where the intersection point is on the line.
-	//float t0 = f * (glm::dot(edge2, q));
-	//if (t0 > EPSILON) {   // Ray intersection in this case
-	//	float t0 = glm::dot(edge2, glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2));
-	//	*t = t0;
-	//	return true;
-	//}
-	//else // This means that there is a line intersection but not a ray intersection
-	//	return false;
-
-	
-	u1 = glm::dot((_rayOrigin - a), glm::cross(_rayDirection, edge2)) / glm::dot(edge1, (glm::cross(_rayDirection, edge2)));
-	v1 = glm::dot(_rayDirection, (glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2)));
-	if (u1 < 0 || u1 > 1) {
+	h = glm::cross(_rayDirection, edge2);
+	x = glm::dot(edge1, h);
+	if (x > -EPSILON && x < EPSILON)
 		return false;
-	}
-	else if (v1 < 0 || u1 + v1 > 1) {
+
+	f = 1.0 / x;
+	s = _rayOrigin - a;
+	u = f * (glm::dot(s, h));
+	if (u < 0.0 || u > 1.0)
 		return false;
-	}
-	else {
-		u = u1;
-		v = v1;
-		w = 1 - u - v;
-		float t0 = glm::dot(edge2, glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2));
+
+	q = glm::cross(s, edge1);
+	v = f * (glm::dot(_rayDirection, q));
+	if (v < 0.0 || u + v > 1.0)
+		return false;
+	w = 1.0f - u - v;
+	// By now we can surely compute t* to check where the intersection point is on the line.
+	float t0 = f * (glm::dot(edge2, q));
+	if (t0 > EPSILON) {   // Ray intersection in this case
 		*t = t0;
 		return true;
 	}
+	else // This means that there is a line intersection but not a ray intersection
+		return false;
+
+	
+	/*u = glm::dot((_rayOrigin - a), glm::cross(_rayDirection, edge2)) / glm::dot(edge1, (glm::cross(_rayDirection, edge2)));
+	v = glm::dot(_rayDirection, (glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2)));
+	w = 1 - u - v;
+	if (u < 0 || u > 1) {
+		return false;
+	}
+	else if (v < 0 || u + v > 1) {
+		return false;
+	}
+	else {
+		float t0 = glm::dot(edge2, glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2));
+		*t = t0;
+		return true;
+	}*/
 }
 
 // Calculation for normal on 
@@ -325,17 +322,31 @@ glm::vec3 getNormal( Triangle *triangle ) {
 }
 
 
+void bayCentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &uu, float &vv, float &ww)
+{
+	glm::vec3 v0 = b - a, v1 = c - a, v2 = p - a;
+	float d00 = glm::dot(v0, v0);
+	float d01 = glm::dot(v0, v1);
+	float d11 = glm::dot(v1, v1);
+	float d20 = glm::dot(v2, v0);
+	float d21 = glm::dot(v2, v1);
+	float denom = d00 * d11 - d01 * d01;
+	vv = (d11 * d20 - d01 * d21) / denom;
+	ww = (d00 * d21 - d01 * d20) / denom;
+	uu = 1.0f - vv - ww;
+}
+
+// TODO: Using baycentric coordinates, I need to have A, B, C, the coordinates within each triangle.
 glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
 	*_shininess = 120;
 	*_diffuse = colour;
-	*_specular = glm::vec3(0.7,0.7, 0.7);
+	*_specular = glm::vec3(30,30, 30);
 
 	glm::vec3 normX = getNormal(dynamic_cast<Triangle*>(meshArr[5]));
 	glm::vec3 normY = getNormal(dynamic_cast<Triangle*>(meshArr[6]));
 	glm::vec3 normZ = getNormal(dynamic_cast<Triangle*>(meshArr[7]));
-	Triangle* triangle = dynamic_cast<Triangle*>(meshArr[8]);
-
-	return glm::normalize((u*normY) + (v*normX) + (w*normZ));
+	
+	return glm::normalize( (((u*normY) + (v*normZ) + (w*normX))) );
 }
 
 

@@ -7,12 +7,10 @@ c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(6
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(64): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(65): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(124): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(128): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(123): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(127): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(250): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(252): warning C4101: 'q': unreferenced local variable
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(251): warning C4101: 'f': unreferenced local variable
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(252): warning C4101: 's': unreferenced local variable
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(251): warning C4101: 'x': unreferenced local variable
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(252): warning C4101: 'h': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(262): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(251): warning C4101: 'u1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(251): warning C4101: 'v1': unreferenced local variable
   COMP4490.vcxproj -> C:\Users\Owner\Desktop\School\COMP 4490\A1\comp4490a1\comp4490\build\comp4490.exe

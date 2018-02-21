@@ -8,6 +8,9 @@
 
 using namespace std;
 
+//GLOBAL VARIABLE
+Mesh* meshArr[9];
+
 void trace(char *input_file, void *window, int width, int height) {
 	renderSI(window, width, height);             // Rendering Sphere Intersection
 }
@@ -28,21 +31,25 @@ void pick(void *window, int x, int y) {
 //=================================================================================
 void renderSI(void * window, int width, int height)
 {
-	Mesh* meshArr[10];
-	meshArr[0] = new Sphere(glm::vec3(0, -2, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
-	meshArr[1] = new Sphere(glm::vec3(2, 0, -15), glm::vec3(0, 255, 0), 1.5); // BLUE SPHERE
-	meshArr[2] = new Sphere(glm::vec3(4, 0, -15), glm::vec3(0, 0, 255), 2); // GREEN SPHERE
-	meshArr[3] = new Sphere(glm::vec3(0, -1, -16), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
+	meshArr[0] = new Sphere(glm::vec3(0, 10005, -50), glm::vec3(169, 169, 169), 10000); // dark Floor
+	meshArr[1] = new Sphere(glm::vec3(0, -2, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
+	meshArr[2] = new Sphere(glm::vec3(2, 0, -15), glm::vec3(0, 255, 0), 1.5); // BLUE SPHERE
+	meshArr[3] = new Sphere(glm::vec3(4, 0, -15), glm::vec3(0, 0, 255), 2); // GREEN SPHERE
+	meshArr[4] = new Sphere(glm::vec3(0, -1, -16), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
 
-	// Triangular Mesh -> 3D. This is 4 sides triangle mesh with square at the bottom
-	meshArr[4] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128)); // PURPLE TRIANGLE
-	meshArr[5] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(2, 2, -13), glm::vec3(2, 2, -17), glm::vec3(128, 0.0, 128));
-	meshArr[6] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(2, 2, -17), glm::vec3(-2, 2, -17), glm::vec3(128, 0.0, 128));
-	meshArr[7] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(128, 0.0, 128));
-	// bottom retangular
-	meshArr[8] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(2, 2, -17), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
-	meshArr[9] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
+	//// Triangular Mesh -> 3D. This is 4 sides triangle mesh with square at the bottom
+	//meshArr[4] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128)); // PURPLE TRIANGLE
+	//meshArr[5] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(2, 2, -13), glm::vec3(2, 2, -17), glm::vec3(128, 0.0, 128));
+	//meshArr[6] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(2, 2, -17), glm::vec3(-2, 2, -17), glm::vec3(128, 0.0, 128));
+	//meshArr[7] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(128, 0.0, 128));
+	//// bottom retangular
+	//meshArr[8] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(2, 2, -17), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
+	//meshArr[9] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
 
+	meshArr[5] = new Triangle(glm::vec3(0, -5, -15), glm::vec3(-2, -1, -13), glm::vec3(-0.5, -1, -15), glm::vec3(128, 0.0, 128)); // PURPLE TRIANGLE
+	meshArr[6] = new Triangle(glm::vec3(0, -5, -15), glm::vec3(-0.5, -1, -15), glm::vec3(1, -1, -17), glm::vec3(128, 0.0, 128));
+	meshArr[7] = new Triangle(glm::vec3(0, -5, -15), glm::vec3(-2, -1, -13), glm::vec3(1, -1, -17), glm::vec3(128, 0.0, 128));
+	meshArr[8] = new Triangle(glm::vec3(-2, -1, -13), glm::vec3(-0.5, -1, -15), glm::vec3(1, -1, -17), glm::vec3(128, 0.0, 128));
 
 
 	glm::vec3 **image = new glm::vec3*[width];
@@ -71,17 +78,38 @@ void renderSI(void * window, int width, int height)
 					minT = t0;
 					sphereHit = i;
 				}
+			}
 
-				if (sphereHit != -1) {
-					set(window, x, y, meshArr[sphereHit]->colour.r, meshArr[sphereHit]->colour.g,
-						meshArr[sphereHit]->colour.b);
-				}
-				else {
-					set(window, x, y, 255, 255, 255);
-				}
+			if (sphereHit != -1) {
+				glm::vec3 p0 = rayOrigin + (minT * rayDirection);
+
+				// LIGHT PROPERTIES
+				glm::vec3 lightPos = glm::vec3( 0, -30, 0);
+				glm::vec3 lightIntensity = glm::vec3(1.0, 1.0, 1.0);
+				glm::vec3 diffuseColour = glm::vec3(0, 0, 0);
+				glm::vec3 specularColour = glm::vec3(0, 0, 0);
+				int shininess = 0;
+
+				// DIFFUSE LIGHTING
+				glm::vec3 lightRay = glm::normalize(lightPos - p0);
+				glm::vec3 normal = meshArr[sphereHit]->calNormal(&shininess, p0, &diffuseColour, &specularColour);
+				glm::vec3 diffuse = diffuseColour * lightIntensity * glm::max(0.0f, glm::dot(lightRay, normal));
+
+				// SPECULAR LIGHTING
+				glm::vec3 reflection = glm::normalize(2 * (glm::dot(lightRay, normal)) * normal - lightRay);
+				float maxCalc = glm::max(0.0f, glm::dot(reflection, glm::normalize(rayOrigin - p0)));
+				glm::vec3 specular = specularColour * lightIntensity * glm::pow(maxCalc, shininess);
+
+				glm::vec3 phongShade = diffuse + specular;
+
+				set(window, x, y, phongShade.x , phongShade.y, phongShade.z );
+			}
+			else {
+				set(window, x, y, 255, 255, 255);
 			}
 		}
 	}
+	cout << "RENDERED" << endl;
 }
 
 // MESH DEFINITION
@@ -153,10 +181,10 @@ bool Sphere::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *
 }
 
 glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 120;  // to give a glow effect
+	*_shininess = 150;  // to give a glow effect
 	*_diffuse = colour;
-	*_specular = glm::vec3(0.66, 0.66, 0.66);
-	return (_p0 - pos);
+	*_specular = glm::vec3(30, 30, 30);
+	return glm::normalize(_p0 - pos);
 }
 
 
@@ -171,13 +199,20 @@ Triangle::Triangle(void) {
 	a = glm::vec3(0, 0, 0);
 	b = glm::vec3(0, 0, 0);
 	c = glm::vec3(0, 0, 0);
+	/*normA = glm::vec3(0, 0, 0);
+	normB = glm::vec3(0, 0, 0);
+	normC = glm::vec3(0, 0, 0);*/
 }
 
 // Basic Constructor
-Triangle::Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour) {
+Triangle::Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, 
+				   /*glm::vec3 _normA, glm::vec3 _normB, glm::vec3 _normC,*/ glm::vec3 _colour ) {
 	a = _a;
 	b = _b;
 	c = _c;
+	/*normA = _normA;
+	normB = _normB;
+	normC = _normC;*/
 	colour = _colour;
 }
 
@@ -188,7 +223,7 @@ Triangle::Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour) 
 //=======================================================================================
 bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t) {
 	const float EPSILON = 0.0000001;
-	float x, f, u, v;
+	float x, f;
 	glm::vec3 h, s, q;
 
 	glm::vec3 edge1 = b - a;
@@ -209,7 +244,7 @@ bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float
 	v = f * (glm::dot(_rayDirection, q));
 	if (v < 0.0 || u + v > 1.0)
 		return false;
-
+	w = 1 - u - v;
 	// By now we can surely compute t* to check where the intersection point is on the line.
 	float t0 = f * (glm::dot(edge2, q));
 	if (t0 > EPSILON) {   // Ray intersection in this case
@@ -237,9 +272,40 @@ bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float
 	}*/
 }
 
+// Calculation for normal on 
+float getNormalX(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c) {
+	glm::vec3 A = _b - _a;
+	glm::vec3 B = _c - _a;
+	return ( A.y * B.z ) - ( A.z * B.y ); 
+}
+float getNormalY(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c) {
+	glm::vec3 A = _b - _a;
+	glm::vec3 B = _c - _a;
+	return ( A.z * B.x ) - ( A.x * B.z );
+}
+float getNormalZ(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c) {
+	glm::vec3 A = _b - _a;
+	glm::vec3 B = _c - _a;
+	return ( A.x * B.y ) - ( A.y * B.x ); 
+}
+
+// Calculating triangle's normal
+glm::vec3 getNormal( Triangle *triangle ) {
+	float triNormX = getNormalX( triangle->a, triangle->b, triangle->c );
+	float triNormY = getNormalY( triangle->a, triangle->b, triangle->c );
+	float triNormZ = getNormalY( triangle->a, triangle->b, triangle->c );
+	return glm::vec3(triNormX, triNormY, triNormZ);
+}
+
+
 glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 90;
+	*_shininess = 120;
 	*_diffuse = colour;
-	*_specular = glm::vec3(0.66, 0.66, 0.66);
-	return *_diffuse;
+	*_specular = glm::vec3(20, 20, 20);
+
+	glm::vec3 normX = getNormal(dynamic_cast<Triangle*>(meshArr[5]));
+	glm::vec3 normY = getNormal(dynamic_cast<Triangle*>(meshArr[6]));
+	glm::vec3 normZ = getNormal(dynamic_cast<Triangle*>(meshArr[7]));
+
+	return (u*normY) + (v*normZ) + (w*normX);
 }

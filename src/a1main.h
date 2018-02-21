@@ -26,7 +26,7 @@ public:
 	Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N);
 	virtual bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 
-	glm::vec3 calNormal(int *shininess, glm::vec3 _p0, glm::vec3 *diffuse, glm::vec3 *specular);
+	virtual glm::vec3 calNormal(int *shininess, glm::vec3 _p0, glm::vec3 *diffuse, glm::vec3 *specular);
 };
 
 //======================================================================
@@ -49,9 +49,11 @@ public:
 //======================================================================
 class Triangle : public Mesh {
 public:
-	glm::vec3 a, b, c;
+	glm::vec3 a, b, c/*, normA, normB, normC*/;
+	float u, v, w;
 	Triangle(void);
-	Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour);
+	Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c,
+		/*glm::vec3 _normA, glm::vec3 _normB, glm::vec3 _normC,*/ glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
 };

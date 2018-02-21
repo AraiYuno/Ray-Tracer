@@ -91,12 +91,14 @@
     <ClInclude Include="..\src\a1main.h" />
     <ClInclude Include="..\src\vc\stdafx.h" />
     <ClInclude Include="..\src\vc\targetver.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\a1main.cpp" />
     <ClCompile Include="..\src\example.cpp" />
     <ClCompile Include="..\src\vc\stdafx.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="sphere.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

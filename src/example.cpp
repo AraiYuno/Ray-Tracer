@@ -2,14 +2,13 @@
 #include <fstream>
 #include <iostream>
 #include <glm/glm.hpp>
-
-#include "FL\OBJ_Loader.h"
 #include "a1main.h"
 
 using namespace std;
 
 //GLOBAL VARIABLE
 Mesh* meshArr[9];
+bool hardShadow = true;
 
 void trace(char *input_file, void *window, int width, int height) {
 	renderSI(window, width, height);             // Rendering Sphere Intersection
@@ -32,10 +31,10 @@ void pick(void *window, int x, int y) {
 void renderSI(void * window, int width, int height)
 {
 	meshArr[0] = new Sphere(glm::vec3(0, 10005, -50), glm::vec3(15, 15, 15), 10000); // dark Floor
-	meshArr[1] = new Sphere(glm::vec3(5, -2, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
+	meshArr[1] = new Sphere(glm::vec3(5, -5, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
 	meshArr[2] = new Sphere(glm::vec3(3, 0, -15), glm::vec3(255, 255, 255), 1.5); // WHITE SPHERE
-	meshArr[3] = new Sphere(glm::vec3(4, 0, -15), glm::vec3(0, 0, 255), 2); // BLUE SPHERE
-	meshArr[4] = new Sphere(glm::vec3(-3, -1, -16), glm::vec3(255, 255, 0), 1);  // YELLOW SHPERE
+	meshArr[3] = new Sphere(glm::vec3(4, 0, -15), glm::vec3(255, 255, 0), 2); // BLUE SPHERE
+	meshArr[4] = new Sphere(glm::vec3(-7.0, 0, -15), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
 
 	//// Triangular Mesh -> 3D. This is 4 sides triangle mesh with square at the bottom
 	//meshArr[4] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128)); // PURPLE TRIANGLE
@@ -51,19 +50,21 @@ void renderSI(void * window, int width, int height)
 	meshArr[7] = new Triangle(glm::vec3(2, 2, -13), glm::vec3(2, 2, -17), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // w -> BCP
 	meshArr[8] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(2 , 2, -13), glm::vec3(2, 2, -17), glm::vec3(67, 208, 84)); // ABC -> base
 
+	//meshArr[0] = new Box(glm::vec3(-0.1, -0.1, -0.1), glm::vec3(0.1, 0.1, 0.1), glm::vec3(255, 33, 33));
+
+	// CREATING DIRECTIONAL LIGHT
+	ShadowAtt* dirLight = new ShadowAtt(glm::vec3(15, -20, 0), glm::vec3(15, 0.1f, 15));
 
 	glm::vec3 **image = new glm::vec3*[width];
-	for (int i = 0; i < width; i++) {
+	for (int i = 0; i < width; i++) 
 		image[i] = new glm::vec3[height];
-	}
-
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
 			float pixRemapX = (2 * ((x + 0.5) / width) - 1)*(width/height) ;
 			float pixRemapY = 1 - 2 * ((y + 0.5) / height);
-			float pixCamX = pixRemapX * glm::tan(glm::radians(45.0) / 2);
-			float pixCamY = pixRemapY * glm::tan(glm::radians(45.0) / 2);
+			float pixCamX = pixRemapX * glm::tan(glm::radians(60.0) / 2);
+			float pixCamY = pixRemapY * glm::tan(glm::radians(60.0) / 2);
 			glm::vec3 PcamSpace = glm::vec3(pixCamX, pixCamY, -1);
 			glm::vec3 rayOrigin = glm::vec3(0, 0, 0);
 			glm::vec3 rayDirection = glm::normalize(PcamSpace - rayOrigin);
@@ -84,9 +85,19 @@ void renderSI(void * window, int width, int height)
 			if (sphereHit != -1) {
 				glm::vec3 p0 = rayOrigin + (minT * rayDirection);
 
-				// LIGHT PROPERTIES
-				glm::vec3 lightPos = glm::vec3(0, -20, 0);
+				// LIGHT PROPERTIES 1 -> POINT LIGHT
+				glm::vec3 lightPos, lightSize, lightCentre;
 				glm::vec3 lightIntensity = glm::vec3(1.0, 1.0, 1.0);
+				if (hardShadow) {
+					lightPos = glm::vec3(15, -20, 0);
+				}
+				// LIGHT PROPERTIES 2 -> DIRECTIONAL LIGHT
+				else {
+					lightPos = glm::vec3(dirLight->pos.x, dirLight->pos.y, dirLight->pos.z);
+					lightSize = glm::vec3(dirLight->size.x, dirLight->size.y, dirLight->size.z);
+					lightCentre = glm::vec3(lightPos.x + (lightSize.x / 2), lightPos.y + (lightSize.y / 2), lightPos.z + (lightSize.z / 2));
+				}
+
 				glm::vec3 diffuseColour = glm::vec3(0, 0, 0);
 				glm::vec3 specularColour = glm::vec3(0, 0, 0);
 				int shininess = 0;
@@ -106,24 +117,61 @@ void renderSI(void * window, int width, int height)
 				float maxCalc = glm::max(0.0f, glm::dot(reflection, glm::normalize(rayOrigin - p0)));
 				glm::vec3 specular = specularColour * lightIntensity * glm::pow(maxCalc, shininess);
 
+				// DISTANCE ANNUTATION
+				float distance = glm::distance(lightPos, p0);
+				float attenuation = 10.0f / distance;
 
 				// CHECK IF THE LIGHT HITS THE MESHES
 				int lightHitsMesh = -1;
-				for (int j = 0; j < sizeof(meshArr) / sizeof(meshArr[0]); j++) {
-					bool lightHit = meshArr[j]->Intersection(p0 + (1e-4f * normal), lightRay, &t0);
 
-					if (lightHit && t0 < minT) {
-						minT = t0;
-						lightHitsMesh = j;
+				if (hardShadow) {
+					for (int j = 0; j < sizeof(meshArr) / sizeof(meshArr[0]); j++) {
+						bool lightHit = meshArr[j]->Intersection(p0 + (1e-4f * normal), lightRay, &t0);
+
+						if (lightHit && t0 < minT) {
+							minT = t0;
+							lightHitsMesh = j;
+						}
+					}
+					if (lightHitsMesh != -1) {
+						glm::vec3 ambientShade = (meshArr[lightHitsMesh]->colour * ambient);
+						set(window, x, y, ambientShade.x, ambientShade.y, ambientShade.z);
+					}
+					else {
+						glm::vec3 phongShade = (specular + diffuse) ;
+						set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
 					}
 				}
-				if (lightHitsMesh != -1) {
-
-					glm::vec3 ambientShade = meshArr[lightHitsMesh]->colour * ambient;
-					set(window, x, y, ambientShade.x, ambientShade.y, ambientShade.z);
-				}
 				else {
-					glm::vec3 phongShade = diffuse + specular;
+					float sample = 2.0f;
+					float totalRays = sample * sample;
+					float uniformX = lightSize.x / sample;
+					float uniformZ = lightSize.z / sample;
+					float raysHit = 1.0f;
+					for (float m = 0; m < lightSize.x; m += uniformX) {
+						for (float n = 0; n < lightSize.z; n += uniformZ) {
+							float t0s = 0.0f;
+							float minTs = INFINITY;
+							lightHitsMesh = -1;
+
+							lightPos = glm::vec3(m, lightPos.y, n);
+							lightRay = glm::normalize(lightPos - p0);
+							for (int l = 0; l < sizeof(meshArr) / sizeof(meshArr[0]); l++) {
+								if (sphereHit != l) {
+									bool lightingHit = meshArr[l]->Intersection(p0 + (1e-4f * normal), lightRay, &t0s);
+									if (lightingHit && t0s < minTs) {
+										minTs = t0s;
+										lightHitsMesh = l;
+									}
+								}
+							}
+
+							if (lightHitsMesh = -1)
+								raysHit = raysHit + (1 / totalRays);
+						}
+					}
+					glm::vec3 phongShade = glm::vec3((raysHit) * (diffuse + specular));
+					//cout << (phongShade).x << endl;
 					set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
 				}
 			}
@@ -207,7 +255,7 @@ bool Sphere::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *
 glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
 	*_shininess = 150;  // to give a glow effect
 	*_diffuse = colour;
-	*_specular = glm::vec3(30, 30, 30);
+	*_specular = glm::vec3(25, 25, 25);
 	N = glm::normalize(_p0 - pos);
 	return N;
 }
@@ -349,6 +397,68 @@ glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffus
 	return glm::normalize( (((u*normY) + (v*normZ) + (w*normX))) );
 }
 
+
+
+// BOX INTERSECTION
+//=======================================================================================
+//=======================================================================================
+//=======================================================================================
+Box::Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour ) { 
+	bounds[0] = b0;
+	bounds[1] = b1;
+	colour = _colour;
+}
+
+bool Box::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
+{
+	float tmin, tmax, tymin, tymax, tzmin, tzmax;
+	glm::vec3 invDir = 1.0f / _rayDirection;           // Inverse ray direction
+	int sign[3];
+	sign[0] = (invDir.x < 0);
+	sign[1] = (invDir.y < 0);
+	sign[2] = (invDir.z < 0);
+
+	tmin = (bounds[sign[0]].x - _rayOrigin.x) * invDir.x;
+	tmax = (bounds[1 - sign[0]].x - _rayOrigin.x) * invDir.x;
+	tymin = (bounds[sign[1]].y - _rayOrigin.y) * invDir.y;
+	tymax = (bounds[1 - sign[1]].y - _rayOrigin.y) * invDir.y;
+
+	//cout << "tmin: " << tmin << ", tymax: " << tymax << endl;
+	if ((tmin > tymax) || (tymin > tmax)) {
+		cout << "FALSE1" << endl;
+		return false;
+	}
+
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
+
+	tzmin = (bounds[sign[2]].z - _rayOrigin.z) * invDir.z;
+	tzmax = (bounds[1 - sign[2]].z - _rayOrigin.z) * invDir.z;
+
+	if ((tmin > tzmax) || (tzmin > tmax)) {
+		cout << "FALSE2" << endl;
+		return false;
+	}
+
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+
+	*t = tmin;
+
+	if (*t < 0) {
+		*t = tmax;
+		if (*t < 0) {
+			cout << "FALSE3" << endl;
+			return false;
+		}
+	}
+	//cout << "TRUE" << endl;
+	return true;
+}
 
 
 // SHADOW ATTENUATION

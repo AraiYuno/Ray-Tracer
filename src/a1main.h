@@ -1,5 +1,6 @@
 #include <iostream>
 #include <glm/glm.hpp>
+#include <FL/vector3.h>
 using namespace std;
 
 //Implement
@@ -57,6 +58,19 @@ public:
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
 };
+
+
+//======================================================================
+// Box Intersection
+//    Code for Box Intersection
+//======================================================================
+class Box : public Mesh {
+public:
+	glm::vec3 bounds[2];
+	Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour);
+	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
+};
+
 
 
 

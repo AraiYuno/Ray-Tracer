@@ -7,7 +7,7 @@
 using namespace std;
 
 //GLOBAL VARIABLE
-Mesh* meshArr[9];
+Mesh* meshArr[10];
 bool hardShadow = true;
 
 void trace(char *input_file, void *window, int width, int height) {
@@ -30,11 +30,11 @@ void pick(void *window, int x, int y) {
 //=================================================================================
 void renderSI(void * window, int width, int height)
 {
-	meshArr[0] = new Sphere(glm::vec3(0, 10005, -50), glm::vec3(15, 15, 15), 10000); // dark Floor
-	meshArr[1] = new Sphere(glm::vec3(5, -5, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
-	meshArr[2] = new Sphere(glm::vec3(3, 0, -15), glm::vec3(255, 255, 255), 1.5); // WHITE SPHERE
-	meshArr[3] = new Sphere(glm::vec3(4, 0, -15), glm::vec3(255, 255, 0), 2); // BLUE SPHERE
-	meshArr[4] = new Sphere(glm::vec3(-7.0, 0, -15), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
+	meshArr[0] = new Sphere(glm::vec3(0, -10005, -50), glm::vec3(15, 15, 15), 10000); // dark Floor
+	meshArr[1] = new Sphere(glm::vec3(5, 5, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
+	meshArr[2] = new Sphere(glm::vec3(6, 0, -15), glm::vec3(255, 255, 255), 1.5); // WHITE SPHERE
+	meshArr[3] = new Sphere(glm::vec3(7, 0, -15), glm::vec3(255, 255, 0), 2); // BLUE SPHERE
+	meshArr[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
 
 	//// Triangular Mesh -> 3D. This is 4 sides triangle mesh with square at the bottom
 	//meshArr[4] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128)); // PURPLE TRIANGLE
@@ -45,29 +45,29 @@ void renderSI(void * window, int width, int height)
 	//meshArr[8] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(2, 2, -17), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
 	//meshArr[9] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
 
-	meshArr[5] = new Triangle(glm::vec3(2, 2, -17), glm::vec3(-2, 2, -15), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // EMERALD TRIANGLE // u -> CAP
-	meshArr[6] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(2, 2, -13), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // v -> ABP
-	meshArr[7] = new Triangle(glm::vec3(2, 2, -13), glm::vec3(2, 2, -17), glm::vec3(0, -2, -15), glm::vec3(67, 208, 84)); // w -> BCP
-	meshArr[8] = new Triangle(glm::vec3(-2, 2, -15), glm::vec3(2 , 2, -13), glm::vec3(2, 2, -17), glm::vec3(67, 208, 84)); // ABC -> base
+	meshArr[5] = new Triangle(glm::vec3(2, 6, -17), glm::vec3(-2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // EMERALD TRIANGLE // u -> CAP
+	meshArr[6] = new Triangle(glm::vec3(-2, 6, -15), glm::vec3(2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // v -> ABP
+	meshArr[7] = new Triangle(glm::vec3(2, 6, -13), glm::vec3(2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // w -> BCP
+	meshArr[8] = new Triangle(glm::vec3(-2, 6, -15), glm::vec3(2 , 6, -13), glm::vec3(2, 6, -17), glm::vec3(67, 208, 84)); // ABC -> base
 
-	//meshArr[0] = new Box(glm::vec3(-0.1, -0.1, -0.1), glm::vec3(0.1, 0.1, 0.1), glm::vec3(255, 33, 33));
+	meshArr[9] = new Box(glm::vec3(-5, -5, -13), glm::vec3(-3, -3, -11), glm::vec3(33, 33, 255));
 
 	// CREATING DIRECTIONAL LIGHT
-	ShadowAtt* dirLight = new ShadowAtt(glm::vec3(15, -20, 0), glm::vec3(15, 0.1f, 15));
+	ShadowAtt* dirLight = new ShadowAtt(glm::vec3(15, -20, 0), glm::vec3(5.0f, 0.1f, 5.0f));
 
 	glm::vec3 **image = new glm::vec3*[width];
 	for (int i = 0; i < width; i++) 
 		image[i] = new glm::vec3[height];
 
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
-			float pixRemapX = (2 * ((x + 0.5) / width) - 1)*(width/height) ;
-			float pixRemapY = 1 - 2 * ((y + 0.5) / height);
-			float pixCamX = pixRemapX * glm::tan(glm::radians(60.0) / 2);
-			float pixCamY = pixRemapY * glm::tan(glm::radians(60.0) / 2);
-			glm::vec3 PcamSpace = glm::vec3(pixCamX, pixCamY, -1);
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			float pixRemapX = (2 * ((x + 0.5f) / (float)width) - 1)*(float)(width/height) ;
+			float pixRemapY = 1 - 2 * ((y + 0.5f) / (float)height);
+			float pixCamX = pixRemapX * glm::tan(glm::radians(90.0) / 2);
+			float pixCamY = pixRemapY * glm::tan(glm::radians(90.0) / 2);
+			glm::vec3 PcamSpace = glm::vec3(-pixRemapX, pixRemapY, 1);
 			glm::vec3 rayOrigin = glm::vec3(0, 0, 0);
-			glm::vec3 rayDirection = glm::normalize(PcamSpace - rayOrigin);
+			glm::vec3 rayDirection = glm::normalize(rayOrigin - PcamSpace);
 
 			float minT = INFINITY;
 			int sphereHit = -1;
@@ -89,7 +89,7 @@ void renderSI(void * window, int width, int height)
 				glm::vec3 lightPos, lightSize, lightCentre;
 				glm::vec3 lightIntensity = glm::vec3(1.0, 1.0, 1.0);
 				if (hardShadow) {
-					lightPos = glm::vec3(15, -20, 0);
+					lightPos = glm::vec3(15, 20, 0);
 				}
 				// LIGHT PROPERTIES 2 -> DIRECTIONAL LIGHT
 				else {
@@ -158,7 +158,7 @@ void renderSI(void * window, int width, int height)
 							lightRay = glm::normalize(lightPos - p0);
 							for (int l = 0; l < sizeof(meshArr) / sizeof(meshArr[0]); l++) {
 								if (sphereHit != l) {
-									bool lightingHit = meshArr[l]->Intersection(p0 + (1e-4f * normal), lightRay, &t0s);
+									bool lightingHit = meshArr[l]->Intersection(p0 + (-1e-4f * normal), lightRay, &t0s);
 									if (lightingHit && t0s < minTs) {
 										minTs = t0s;
 										lightHitsMesh = l;
@@ -183,6 +183,23 @@ void renderSI(void * window, int width, int height)
 	}
 	cout << "RENDERED" << endl;
 }
+
+
+class Ray
+{
+public:
+	Ray(const glm::vec3 &orig, const glm::vec3 &dir) : orig(orig), dir(dir)
+	{
+		invdir = 1.0f / dir;
+		sign[0] = (invdir.x < 0);
+		sign[1] = (invdir.y < 0);
+		sign[2] = (invdir.z < 0);
+	}
+	glm::vec3 orig, dir; // ray orig and dir 
+	glm::vec3 invdir;
+	int sign[3];
+};
+
 
 // MESH DEFINITION
 //=======================================================================================
@@ -423,9 +440,7 @@ bool Box::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
 	tymin = (bounds[sign[1]].y - _rayOrigin.y) * invDir.y;
 	tymax = (bounds[1 - sign[1]].y - _rayOrigin.y) * invDir.y;
 
-	//cout << "tmin: " << tmin << ", tymax: " << tymax << endl;
 	if ((tmin > tymax) || (tymin > tmax)) {
-		cout << "FALSE1" << endl;
 		return false;
 	}
 
@@ -438,7 +453,6 @@ bool Box::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
 	tzmax = (bounds[1 - sign[2]].z - _rayOrigin.z) * invDir.z;
 
 	if ((tmin > tzmax) || (tzmin > tmax)) {
-		cout << "FALSE2" << endl;
 		return false;
 	}
 
@@ -448,16 +462,53 @@ bool Box::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
 		tmax = tzmax;
 
 	*t = tmin;
-
 	if (*t < 0) {
 		*t = tmax;
 		if (*t < 0) {
-			cout << "FALSE3" << endl;
 			return false;
 		}
 	}
-	//cout << "TRUE" << endl;
 	return true;
+
+
+	/*float tmin = (bounds[0].x - _rayOrigin.x) / _rayDirection.x;
+	float tmax = (bounds[1].x - _rayOrigin.x) / _rayDirection.x;
+
+	if (tmin > tmax) swap(tmin, tmax);
+
+	float tymin = (bounds[0].y - _rayOrigin.y) / _rayDirection.y;
+	float tymax = (bounds[1].y - _rayOrigin.y) / _rayDirection.y;
+
+	if (tymin > tymax) swap(tymin, tymax);
+
+	if ((tmin > tymax) || (tymin > tmax))
+		return false;
+
+	if (tymin > tmin)
+		tmin = tymin;
+
+	if (tymax < tmax)
+		tmax = tymax;
+
+	float tzmin = (bounds[0].z - _rayOrigin.z) / _rayDirection.z;
+	float tzmax = (bounds[1].z - _rayOrigin.z) / _rayDirection.z;
+
+	if (tzmin > tzmax) swap(tzmin, tzmax);
+
+	if ((tmin > tzmax) || (tzmin > tmax))
+		return false;
+
+	if (tzmin > tmin) {
+		tmin = tzmin;
+		*t = tmin;
+	}
+
+	if (tzmax < tmax) {
+		tmax = tzmax;
+		*t = tmax;
+	}
+
+	return true;*/
 }
 
 

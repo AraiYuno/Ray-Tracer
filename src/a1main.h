@@ -69,6 +69,8 @@ public:
 	glm::vec3 bounds[2];
 	Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
+	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+	glm::vec3 getNormalPlane(glm::vec3 _p0);
 };
 
 

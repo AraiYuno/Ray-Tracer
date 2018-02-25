@@ -7,7 +7,7 @@
 using namespace std;
 
 //GLOBAL VARIABLE
-Mesh* meshArr[10];
+Mesh* meshArr[11];
 bool hardShadow = true;
 
 void trace(char *input_file, void *window, int width, int height) {
@@ -30,27 +30,23 @@ void pick(void *window, int x, int y) {
 //=================================================================================
 void renderSI(void * window, int width, int height)
 {
+	int count = 0;
+	// SPHERE
 	meshArr[0] = new Sphere(glm::vec3(0, -10005, -50), glm::vec3(15, 15, 15), 10000); // dark Floor
 	meshArr[1] = new Sphere(glm::vec3(5, 5, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
 	meshArr[2] = new Sphere(glm::vec3(6, 0, -15), glm::vec3(255, 255, 255), 1.5); // WHITE SPHERE
 	meshArr[3] = new Sphere(glm::vec3(7, 0, -15), glm::vec3(255, 255, 0), 2); // BLUE SPHERE
 	meshArr[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
 
-	//// Triangular Mesh -> 3D. This is 4 sides triangle mesh with square at the bottom
-	//meshArr[4] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128)); // PURPLE TRIANGLE
-	//meshArr[5] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(2, 2, -13), glm::vec3(2, 2, -17), glm::vec3(128, 0.0, 128));
-	//meshArr[6] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(2, 2, -17), glm::vec3(-2, 2, -17), glm::vec3(128, 0.0, 128));
-	//meshArr[7] = new Triangle(glm::vec3(0, -2, -15), glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(128, 0.0, 128));
-	//// bottom retangular
-	//meshArr[8] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(2, 2, -17), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
-	//meshArr[9] = new Triangle(glm::vec3(-2, 2, -17), glm::vec3(-2, 2, -13), glm::vec3(2, 2, -13), glm::vec3(128, 0.0, 128));
+	// TRIANGULAR MESH
+	meshArr[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // EMERALD TRIANGLE // u -> CAP
+	meshArr[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // v -> ABP
+	meshArr[7] = new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // w -> BCP
+	meshArr[8] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2 , 6, -13), glm::vec3(-2, 6, -17), glm::vec3(67, 208, 84)); // ABC -> base
 
-	meshArr[5] = new Triangle(glm::vec3(2, 6, -17), glm::vec3(-2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // EMERALD TRIANGLE // u -> CAP
-	meshArr[6] = new Triangle(glm::vec3(-2, 6, -15), glm::vec3(2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // v -> ABP
-	meshArr[7] = new Triangle(glm::vec3(2, 6, -13), glm::vec3(2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // w -> BCP
-	meshArr[8] = new Triangle(glm::vec3(-2, 6, -15), glm::vec3(2 , 6, -13), glm::vec3(2, 6, -17), glm::vec3(67, 208, 84)); // ABC -> base
-
-	meshArr[9] = new Box(glm::vec3(-5, -5, -13), glm::vec3(-3, -3, -11), glm::vec3(33, 33, 255));
+	// BOXES
+	meshArr[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(50, 50, 255));
+	meshArr[10] = new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(255, 20, 147));
 
 	// CREATING DIRECTIONAL LIGHT
 	ShadowAtt* dirLight = new ShadowAtt(glm::vec3(15, -20, 0), glm::vec3(5.0f, 0.1f, 5.0f));
@@ -109,7 +105,7 @@ void renderSI(void * window, int width, int height)
 				glm::vec3 ambient = meshArr[sphereHit]->colour * glm::vec3(0.0002, 0.0002, 0.0002);
 
 				// DIFFUSE LIGHTING
-				glm::vec3 lightRay = glm::normalize(lightPos - p0);
+				glm::vec3 lightRay = glm::normalize(lightPos -p0);
 				glm::vec3 diffuse = diffuseColour * lightIntensity * glm::max(0.0f, glm::dot(lightRay, normal));
 
 				// SPECULAR LIGHTING
@@ -122,22 +118,24 @@ void renderSI(void * window, int width, int height)
 				float attenuation = 10.0f / distance;
 
 				// CHECK IF THE LIGHT HITS THE MESHES
+				// TODO:: lightHit is always returning false.
 				int lightHitsMesh = -1;
-
 				if (hardShadow) {
 					for (int j = 0; j < sizeof(meshArr) / sizeof(meshArr[0]); j++) {
-						bool lightHit = meshArr[j]->Intersection(p0 + (1e-4f * normal), lightRay, &t0);
-
-						if (lightHit && t0 < minT) {
+						bool lightHit = meshArr[j]->Intersection(p0 +(1e-4f * normal), lightRay, &t0);
+						if (lightHit && (t0 < minT) ) {
 							minT = t0;
 							lightHitsMesh = j;
 						}
 					}
+					
+					// IT DOES NOT INTERSECT AT SOME POINT
 					if (lightHitsMesh != -1) {
 						glm::vec3 ambientShade = (meshArr[lightHitsMesh]->colour * ambient);
 						set(window, x, y, ambientShade.x, ambientShade.y, ambientShade.z);
 					}
 					else {
+						count++;
 						glm::vec3 phongShade = (specular + diffuse) ;
 						set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
 					}
@@ -167,7 +165,7 @@ void renderSI(void * window, int width, int height)
 							}
 
 							if (lightHitsMesh = -1)
-								raysHit = raysHit + (1 / totalRays);
+								raysHit = raysHit - (1 / totalRays);
 						}
 					}
 					glm::vec3 phongShade = glm::vec3((raysHit) * (diffuse + specular));
@@ -181,6 +179,7 @@ void renderSI(void * window, int width, int height)
 			}
 		}
 	}
+	cout << "COUNT: " << count << endl;
 	cout << "RENDERED" << endl;
 }
 
@@ -343,22 +342,6 @@ bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float
 	}
 	else // This means that there is a line intersection but not a ray intersection
 		return false;
-
-	
-	/*u = glm::dot((_rayOrigin - a), glm::cross(_rayDirection, edge2)) / glm::dot(edge1, (glm::cross(_rayDirection, edge2)));
-	v = glm::dot(_rayDirection, (glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2)));
-	w = 1 - u - v;
-	if (u < 0 || u > 1) {
-		return false;
-	}
-	else if (v < 0 || u + v > 1) {
-		return false;
-	}
-	else {
-		float t0 = glm::dot(edge2, glm::cross((_rayOrigin - a), edge1)) / glm::dot(edge1, glm::cross(_rayDirection, edge2));
-		*t = t0;
-		return true;
-	}*/
 }
 
 // Calculation for normal on 
@@ -469,47 +452,33 @@ bool Box::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
 		}
 	}
 	return true;
-
-
-	/*float tmin = (bounds[0].x - _rayOrigin.x) / _rayDirection.x;
-	float tmax = (bounds[1].x - _rayOrigin.x) / _rayDirection.x;
-
-	if (tmin > tmax) swap(tmin, tmax);
-
-	float tymin = (bounds[0].y - _rayOrigin.y) / _rayDirection.y;
-	float tymax = (bounds[1].y - _rayOrigin.y) / _rayDirection.y;
-
-	if (tymin > tymax) swap(tymin, tymax);
-
-	if ((tmin > tymax) || (tymin > tmax))
-		return false;
-
-	if (tymin > tmin)
-		tmin = tymin;
-
-	if (tymax < tmax)
-		tmax = tymax;
-
-	float tzmin = (bounds[0].z - _rayOrigin.z) / _rayDirection.z;
-	float tzmax = (bounds[1].z - _rayOrigin.z) / _rayDirection.z;
-
-	if (tzmin > tzmax) swap(tzmin, tzmax);
-
-	if ((tmin > tzmax) || (tzmin > tmax))
-		return false;
-
-	if (tzmin > tmin) {
-		tmin = tzmin;
-		*t = tmin;
-	}
-
-	if (tzmax < tmax) {
-		tmax = tzmax;
-		*t = tmax;
-	}
-
-	return true;*/
 }
+
+glm::vec3 Box::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
+	*_shininess = 50;  // to give a glow effect
+	*_diffuse = colour;
+	*_specular = glm::vec3(0.8, 0.8, 0.8);
+	N = getNormalPlane(_p0);
+	return N;
+}
+
+glm::vec3 Box::getNormalPlane(glm::vec3 _p0) {
+	glm::vec3 toReturn = glm::vec3(0, 0, 0);
+	if (_p0.z+0.0005f > bounds[1].z && _p0.z-0.0005f < bounds[1].z ) // point intersected with the front of the box.
+		toReturn = glm::vec3(0, 0, 1);
+	else if (_p0.z + 0.0005f > bounds[0].z && _p0.z -0.0005f < bounds[0].z)
+		toReturn = glm::vec3(0, 0, -1);
+	else if (_p0.x + 0.0005f > bounds[1].x && _p0.x - 0.0005f < bounds[1].x)
+		toReturn = glm::vec3(1, 0, 0);
+	else if (_p0.x + 0.0005f > bounds[0].x && _p0.x - 0.0005f < bounds[0].x)
+		toReturn = glm::vec3(-1, 0, 0);
+	else if(_p0.y + 0.0005f > bounds[1].y && _p0.y -0.0005f < bounds[1].y)
+		toReturn = glm::vec3(0, 1, 0);
+	else if(_p0.y + 0.0005f > bounds[0].y && _p0.y - 0.0005f < bounds[0].y)
+		toReturn = glm::vec3(0, -1, 0);
+	return toReturn;
+}
+
 
 
 // SHADOW ATTENUATION

@@ -15,4 +15,5 @@ Completed
 ## 4. Phong illumination model (non-recursive)
 Partially Completed.
 
-## 5
+## 5. Directional & Point Light
+- Point Light completed 

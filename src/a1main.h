@@ -9,6 +9,7 @@ void pick(void *window, int x, int y);
 
 // to render the scene.
 void renderSI(void *window, int width, int height);
+glm::vec3 setToOrigRGB(glm::vec3 _colour);
 
 // use
 void set(void *window, int x, int y, unsigned char red, unsigned char green, unsigned char blue);
@@ -25,8 +26,9 @@ public:
 	glm::vec3 pos, colour, N;
 	Mesh(void);
 	Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N);
-	virtual bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
+	glm::vec3 getFloatRGB(glm::vec3 originalRGB);
 
+	virtual bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	virtual glm::vec3 calNormal(int *shininess, glm::vec3 _p0, glm::vec3 *diffuse, glm::vec3 *specular);
 };
 

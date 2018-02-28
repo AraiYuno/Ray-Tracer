@@ -3,6 +3,12 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "a1main.h"
+// THINGS TO BE DONE
+// 1. Colour scale from 255 to 1.0
+// 2. Directional light is just point opposite.
+// 3. Light attenuation
+// 4. 
+
 
 using namespace std;
 
@@ -32,24 +38,24 @@ void renderSI(void * window, int width, int height)
 {
 	int count = 0;
 	// SPHERE
-	meshArr[0] = new Sphere(glm::vec3(0, -10005, -50), glm::vec3(15, 15, 15), 10000); // dark Floor
-	meshArr[1] = new Sphere(glm::vec3(5, 5, -15), glm::vec3(255, 0, 0), 1); // RED SHPERE
-	meshArr[2] = new Sphere(glm::vec3(6, 0, -15), glm::vec3(255, 255, 255), 1.5); // WHITE SPHERE
-	meshArr[3] = new Sphere(glm::vec3(7, 0, -15), glm::vec3(255, 255, 0), 2); // BLUE SPHERE
-	meshArr[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(255, 255, 0), 2);  // YELLOW SHPERE
+	meshArr[0] = new Sphere(glm::vec3(0, -10005, -50), glm::vec3(0.1f, 0.1f, 0.1f), 10000); // dark Floor
+	meshArr[1] = new Sphere(glm::vec3(5, 5, -15), glm::vec3(1.0f, 0.0f, 0.0f), 1); // RED SHPERE
+	meshArr[2] = new Sphere(glm::vec3(6, 0, -15), glm::vec3(1.0f, 0.0f, 0.0f), 1.5); // WHITE SPHERE
+	meshArr[3] = new Sphere(glm::vec3(7, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2); // BLUE SPHERE
+	meshArr[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2);  // YELLOW SHPERE
 
 	// TRIANGULAR MESH
-	meshArr[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // EMERALD TRIANGLE // u -> CAP
-	meshArr[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // v -> ABP
-	meshArr[7] = new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(67, 208, 84)); // w -> BCP
-	meshArr[8] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2 , 6, -13), glm::vec3(-2, 6, -17), glm::vec3(67, 208, 84)); // ABC -> base
+	meshArr[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.13f, 0.55f, 0.13f)); // EMERALD TRIANGLE // u -> CAP
+	meshArr[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.13f, 0.55f, 0.13f)); // v -> ABP
+	meshArr[7] = new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(0.13f, 0.55f, 0.13f)); // w -> BCP
+	meshArr[8] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2 , 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0.13f, 0.55f, 0.13f)); // ABC -> base
 
 	// BOXES
-	meshArr[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(50, 50, 255));
-	meshArr[10] = new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(255, 20, 147));
+	meshArr[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(0.20f, 0.20f, 1.0f));
+	meshArr[10] = new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(1.0f, 0.078f, 0.58f));
 
 	// CREATING DIRECTIONAL LIGHT
-	ShadowAtt* dirLight = new ShadowAtt(glm::vec3(15, -20, 0), glm::vec3(5.0f, 0.1f, 5.0f));
+	ShadowAtt* dirLight = new ShadowAtt(glm::vec3(15, 20, 0), glm::vec3(15.0f, 0.1f, 15.0f));
 
 	glm::vec3 **image = new glm::vec3*[width];
 	for (int i = 0; i < width; i++) 
@@ -83,7 +89,7 @@ void renderSI(void * window, int width, int height)
 
 				// LIGHT PROPERTIES 1 -> POINT LIGHT
 				glm::vec3 lightPos, lightSize, lightCentre;
-				glm::vec3 lightIntensity = glm::vec3(1.0, 1.0, 1.0);
+				glm::vec3 lightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
 				if (hardShadow) {
 					lightPos = glm::vec3(15, 20, 0);
 				}
@@ -102,7 +108,7 @@ void renderSI(void * window, int width, int height)
 				glm::vec3 normal = meshArr[sphereHit]->calNormal(&shininess, p0, &diffuseColour, &specularColour);
 
 				// AMBIENT LIGHTING
-				glm::vec3 ambient = meshArr[sphereHit]->colour * glm::vec3(0.0002, 0.0002, 0.0002);
+				glm::vec3 ambient = meshArr[sphereHit]->colour * glm::vec3(0.1, 0.1, 0.1);
 
 				// DIFFUSE LIGHTING
 				glm::vec3 lightRay = glm::normalize(lightPos -p0);
@@ -116,6 +122,9 @@ void renderSI(void * window, int width, int height)
 				// DISTANCE ANNUTATION
 				float distance = glm::distance(lightPos, p0);
 				float attenuation = 10.0f / distance;
+
+				// SHADOW ATTENUATION
+
 
 				// CHECK IF THE LIGHT HITS THE MESHES
 				// TODO:: lightHit is always returning false.
@@ -132,11 +141,14 @@ void renderSI(void * window, int width, int height)
 					// IT DOES NOT INTERSECT AT SOME POINT
 					if (lightHitsMesh != -1) {
 						glm::vec3 ambientShade = (meshArr[lightHitsMesh]->colour * ambient);
+						ambientShade = setToOrigRGB(ambientShade);
 						set(window, x, y, ambientShade.x, ambientShade.y, ambientShade.z);
 					}
 					else {
 						count++;
 						glm::vec3 phongShade = (specular + diffuse) ;
+						phongShade = setToOrigRGB(phongShade);
+						//cout << phongShade.x << ", " << phongShade.y << ", " << phongShade.z << endl;
 						set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
 					}
 				}
@@ -156,7 +168,7 @@ void renderSI(void * window, int width, int height)
 							lightRay = glm::normalize(lightPos - p0);
 							for (int l = 0; l < sizeof(meshArr) / sizeof(meshArr[0]); l++) {
 								if (sphereHit != l) {
-									bool lightingHit = meshArr[l]->Intersection(p0 + (-1e-4f * normal), lightRay, &t0s);
+									bool lightingHit = meshArr[l]->Intersection(p0 + (1e-4f * normal), lightRay, &t0s);
 									if (lightingHit && t0s < minTs) {
 										minTs = t0s;
 										lightHitsMesh = l;
@@ -165,11 +177,11 @@ void renderSI(void * window, int width, int height)
 							}
 
 							if (lightHitsMesh = -1)
-								raysHit = raysHit - (1 / totalRays);
+								raysHit = raysHit + (1 / totalRays);
 						}
 					}
 					glm::vec3 phongShade = glm::vec3((raysHit) * (diffuse + specular));
-					//cout << (phongShade).x << endl;
+					phongShade = setToOrigRGB(phongShade);
 					set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
 				}
 			}
@@ -183,21 +195,24 @@ void renderSI(void * window, int width, int height)
 	cout << "RENDERED" << endl;
 }
 
-
-class Ray
-{
-public:
-	Ray(const glm::vec3 &orig, const glm::vec3 &dir) : orig(orig), dir(dir)
-	{
-		invdir = 1.0f / dir;
-		sign[0] = (invdir.x < 0);
-		sign[1] = (invdir.y < 0);
-		sign[2] = (invdir.z < 0);
+glm::vec3 setToOrigRGB(glm::vec3 _colour) {
+	glm::vec3 toReturn = _colour * 255.0f; // switch from (0, 1) scale to (0, 255)
+	// set the boundaries
+	if (toReturn.x >= 255.0f) {
+		toReturn.x = 255.0f;
 	}
-	glm::vec3 orig, dir; // ray orig and dir 
-	glm::vec3 invdir;
-	int sign[3];
-};
+	if (toReturn.x <= 0.0f)
+		toReturn.x = 0.0f;
+	if (toReturn.y >= 255.0f)
+		toReturn.y = 255.0f;
+	if (toReturn.y <= 0.0f)
+		toReturn.y = 0.0f;
+	if (toReturn.z >= 255.0f)
+		toReturn.z = 255.0f;
+	if (toReturn.z <= 0.0f)
+		toReturn.z = 0.0f;
+	return toReturn;
+}
 
 
 // MESH DEFINITION
@@ -214,6 +229,13 @@ Mesh::Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N) {
 	pos = _position;
 	colour = _colour;
 	N = _N;
+}
+
+glm::vec3 Mesh::getFloatRGB(glm::vec3 originalRGB) {
+	float r = originalRGB.x / 255.0f;
+	float g = originalRGB.y / 255.0f;
+	float b = originalRGB.z / 255.0f;
+	return glm::vec3(r, g, b);
 }
 
 bool Mesh::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t) {
@@ -269,9 +291,9 @@ bool Sphere::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *
 }
 
 glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 150;  // to give a glow effect
+	*_shininess = 155;  // to give a glow effect
 	*_diffuse = colour;
-	*_specular = glm::vec3(25, 25, 25);
+	*_specular = glm::vec3(0.8, 0.8, 0.8);
 	N = glm::normalize(_p0 - pos);
 	return N;
 }
@@ -393,8 +415,9 @@ glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffus
 	glm::vec3 normX = getNormal(dynamic_cast<Triangle*>(meshArr[5]));
 	glm::vec3 normY = getNormal(dynamic_cast<Triangle*>(meshArr[6]));
 	glm::vec3 normZ = getNormal(dynamic_cast<Triangle*>(meshArr[7]));
-	
-	return glm::normalize( (((u*normY) + (v*normZ) + (w*normX))) );
+	glm::vec3 temp = glm::vec3(1, 0, 0);
+
+	return glm::normalize( (((u*temp) + (v*temp) + (w*temp))) );
 }
 
 

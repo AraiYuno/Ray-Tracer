@@ -4,10 +4,9 @@
 #include <glm/glm.hpp>
 #include "a1main.h"
 // THINGS TO BE DONE
-// 1. Colour scale from 255 to 1.0
-// 2. Directional light is just point opposite.
-// 3. Light attenuation
-// 4. 
+// 1. Trinagle Normal calcualtion
+// 2. Multiple Light sources.
+// 3. 
 
 
 using namespace std;
@@ -45,10 +44,10 @@ void renderSI(void * window, int width, int height)
 	meshArr[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2);  // YELLOW SHPERE
 
 	// TRIANGULAR MESH
-	meshArr[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.13f, 0.55f, 0.13f)); // EMERALD TRIANGLE // u -> CAP
-	meshArr[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.13f, 0.55f, 0.13f)); // v -> ABP
-	meshArr[7] = new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(0.13f, 0.55f, 0.13f)); // w -> BCP
-	meshArr[8] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2 , 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0.13f, 0.55f, 0.13f)); // ABC -> base
+	meshArr[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // EMERALD TRIANGLE // u -> CAP
+	meshArr[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // v -> ABP
+	meshArr[7] = new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // w -> BCP
+	meshArr[8] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2 , 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0.08f, 0.33f, 0.08f)); // ABC -> base
 
 	// BOXES
 	meshArr[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(0.20f, 0.20f, 1.0f));
@@ -85,104 +84,76 @@ void renderSI(void * window, int width, int height)
 			}
 
 			if (sphereHit != -1) {
-				glm::vec3 p0 = rayOrigin + (minT * rayDirection);
-
-				// LIGHT PROPERTIES 1 -> POINT LIGHT
-				glm::vec3 lightPos, lightSize, lightCentre;
-				glm::vec3 lightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
-				if (hardShadow) {
-					lightPos = glm::vec3(15, 20, 0);
-				}
-				// LIGHT PROPERTIES 2 -> DIRECTIONAL LIGHT
-				else {
-					lightPos = glm::vec3(dirLight->pos.x, dirLight->pos.y, dirLight->pos.z);
-					lightSize = glm::vec3(dirLight->size.x, dirLight->size.y, dirLight->size.z);
-					lightCentre = glm::vec3(lightPos.x + (lightSize.x / 2), lightPos.y + (lightSize.y / 2), lightPos.z + (lightSize.z / 2));
-				}
-
-				glm::vec3 diffuseColour = glm::vec3(0, 0, 0);
-				glm::vec3 specularColour = glm::vec3(0, 0, 0);
+				glm::vec3 p0, lightPos, lightSize, lightCentre, diffuseColour, specularColour, normal, ambient,
+					lightRay, diffuse, reflection, specular;	
+				diffuseColour = glm::vec3(0, 0, 0);
+				specularColour = glm::vec3(0, 0, 0);
+				glm::vec3 phongShade = glm::vec3(0);
+				glm::vec3 ambientShade = glm::vec3(0);
+				float attenuation;
 				int shininess = 0;
-
-				// NORMAL -> to be used for lighting
-				glm::vec3 normal = meshArr[sphereHit]->calNormal(&shininess, p0, &diffuseColour, &specularColour);
-
-				// AMBIENT LIGHTING
-				glm::vec3 ambient = meshArr[sphereHit]->colour * glm::vec3(0.1, 0.1, 0.1);
-
-				// DIFFUSE LIGHTING
-				glm::vec3 lightRay = glm::normalize(lightPos -p0);
-				glm::vec3 diffuse = diffuseColour * lightIntensity * glm::max(0.0f, glm::dot(lightRay, normal));
-
-				// SPECULAR LIGHTING
-				glm::vec3 reflection = glm::normalize(2 * (glm::dot(lightRay, normal)) * normal - lightRay);
-				float maxCalc = glm::max(0.0f, glm::dot(reflection, glm::normalize(rayOrigin - p0)));
-				glm::vec3 specular = specularColour * lightIntensity * glm::pow(maxCalc, shininess);
-
-				// DISTANCE ANNUTATION
-				float distance = glm::distance(lightPos, p0);
-				float attenuation = 10.0f / distance;
-
-				// SHADOW ATTENUATION
-
-
-				// CHECK IF THE LIGHT HITS THE MESHES
-				// TODO:: lightHit is always returning false.
-				int lightHitsMesh = -1;
-				if (hardShadow) {
-					for (int j = 0; j < sizeof(meshArr) / sizeof(meshArr[0]); j++) {
-						bool lightHit = meshArr[j]->Intersection(p0 +(1e-4f * normal), lightRay, &t0);
-						if (lightHit && (t0 < minT) ) {
-							minT = t0;
-							lightHitsMesh = j;
-						}
+				glm::vec3 lightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
+				for (int i = 0; i < 1; i++) {
+					p0 = rayOrigin + (minT * rayDirection);
+					// LIGHT PROPERTIES 1 -> POINT LIGHT
+					if ( i == 0) {
+						lightPos = glm::vec3(15, 20, 0);
 					}
-					
-					// IT DOES NOT INTERSECT AT SOME POINT
-					if (lightHitsMesh != -1) {
-						glm::vec3 ambientShade = (meshArr[lightHitsMesh]->colour * ambient);
-						ambientShade = setToOrigRGB(ambientShade);
-						set(window, x, y, ambientShade.x, ambientShade.y, ambientShade.z);
+					// LIGHT PROPERTIES 2 -> POINT LIGHT
+					else if( i == 1 ){
+						lightPos = glm::vec3(-15, 20, 0);
 					}
-					else {
-						count++;
-						glm::vec3 phongShade = (specular + diffuse) ;
-						phongShade = setToOrigRGB(phongShade);
-						//cout << phongShade.x << ", " << phongShade.y << ", " << phongShade.z << endl;
-						set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
-					}
-				}
-				else {
-					float sample = 2.0f;
-					float totalRays = sample * sample;
-					float uniformX = lightSize.x / sample;
-					float uniformZ = lightSize.z / sample;
-					float raysHit = 1.0f;
-					for (float m = 0; m < lightSize.x; m += uniformX) {
-						for (float n = 0; n < lightSize.z; n += uniformZ) {
-							float t0s = 0.0f;
-							float minTs = INFINITY;
-							lightHitsMesh = -1;
 
-							lightPos = glm::vec3(m, lightPos.y, n);
-							lightRay = glm::normalize(lightPos - p0);
-							for (int l = 0; l < sizeof(meshArr) / sizeof(meshArr[0]); l++) {
-								if (sphereHit != l) {
-									bool lightingHit = meshArr[l]->Intersection(p0 + (1e-4f * normal), lightRay, &t0s);
-									if (lightingHit && t0s < minTs) {
-										minTs = t0s;
-										lightHitsMesh = l;
-									}
-								}
+
+					// NORMAL -> to be used for lighting
+					normal = meshArr[sphereHit]->calNormal(&shininess, p0, &diffuseColour, &specularColour);
+
+					// AMBIENT LIGHTING
+					ambient = meshArr[sphereHit]->colour * glm::vec3(0.1, 0.1, 0.1);
+
+					// DIFFUSE LIGHTING
+					lightRay = glm::normalize(lightPos - p0);
+					//lightRay = glm::normalize(lightPos); // for directional light
+					diffuse = diffuseColour * lightIntensity * glm::max(0.0f, glm::dot(lightRay, normal));
+
+					// SPECULAR LIGHTING
+					reflection = glm::normalize(2 * (glm::dot(lightRay, normal)) * normal - lightRay);
+					float maxCalc = glm::max(0.0f, glm::dot(reflection, glm::normalize(rayOrigin - p0)));
+					specular = specularColour * lightIntensity * glm::pow(maxCalc, shininess);
+
+					// DISTANCE ANNUTATION
+					float distance = glm::distance(lightPos, p0);
+					attenuation = 1.0f / (0.005 + 0.0025*distance + 0.0010*distance*distance);
+
+
+					// CHECK IF THE LIGHT HITS THE MESHES
+					int lightHitsMesh = -1;
+					if (hardShadow) {
+						for (int j = 0; j < sizeof(meshArr) / sizeof(meshArr[0]); j++) {
+							bool lightHit = meshArr[j]->Intersection(p0 + (1e-4f * normal), lightRay, &t0);
+							if (lightHit && (t0 < minT)) {
+								minT = t0;
+								lightHitsMesh = j;
 							}
+						}
 
-							if (lightHitsMesh = -1)
-								raysHit = raysHit + (1 / totalRays);
+						ambientShade = ambientShade+ (meshArr[lightHitsMesh]->colour * ambient);
+						phongShade = phongShade + (specular + diffuse)*attenuation;
+						if (i == 0) {
+							// IT DOES NOT INTERSECT AT SOME POINT
+							if (lightHitsMesh != -1) {
+								ambientShade = setToOrigRGB(ambientShade);
+								set(window, x, y, ambientShade.x, ambientShade.y, ambientShade.z);
+							}
+							else {
+								count++;
+								phongShade = setToOrigRGB(phongShade);
+								//cout << phongShade.x << ", " << phongShade.y << ", " << phongShade.z << endl;
+								set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
+							}
 						}
 					}
-					glm::vec3 phongShade = glm::vec3((raysHit) * (diffuse + specular));
-					phongShade = setToOrigRGB(phongShade);
-					set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
+			
 				}
 			}
 			else
@@ -191,8 +162,6 @@ void renderSI(void * window, int width, int height)
 			}
 		}
 	}
-	cout << "COUNT: " << count << endl;
-	cout << "RENDERED" << endl;
 }
 
 glm::vec3 setToOrigRGB(glm::vec3 _colour) {
@@ -231,12 +200,6 @@ Mesh::Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N) {
 	N = _N;
 }
 
-glm::vec3 Mesh::getFloatRGB(glm::vec3 originalRGB) {
-	float r = originalRGB.x / 255.0f;
-	float g = originalRGB.y / 255.0f;
-	float b = originalRGB.z / 255.0f;
-	return glm::vec3(r, g, b);
-}
 
 bool Mesh::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t) {
 	return false;
@@ -310,20 +273,13 @@ Triangle::Triangle(void) {
 	a = glm::vec3(0, 0, 0);
 	b = glm::vec3(0, 0, 0);
 	c = glm::vec3(0, 0, 0);
-	/*normA = glm::vec3(0, 0, 0);
-	normB = glm::vec3(0, 0, 0);
-	normC = glm::vec3(0, 0, 0);*/
 }
 
 // Basic Constructor
-Triangle::Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, 
-				   /*glm::vec3 _normA, glm::vec3 _normB, glm::vec3 _normC,*/ glm::vec3 _colour ) {
+Triangle::Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour ) {
 	a = _a;
 	b = _b;
 	c = _c;
-	/*normA = _normA;
-	normB = _normB;
-	normC = _normC;*/
 	colour = _colour;
 }
 
@@ -391,33 +347,17 @@ glm::vec3 getNormal( Triangle *triangle ) {
 	return glm::vec3(triNormX, triNormY, triNormZ);
 }
 
-
-void bayCentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &uu, float &vv, float &ww)
-{
-	glm::vec3 v0 = b - a, v1 = c - a, v2 = p - a;
-	float d00 = glm::dot(v0, v0);
-	float d01 = glm::dot(v0, v1);
-	float d11 = glm::dot(v1, v1);
-	float d20 = glm::dot(v2, v0);
-	float d21 = glm::dot(v2, v1);
-	float denom = d00 * d11 - d01 * d01;
-	vv = (d11 * d20 - d01 * d21) / denom;
-	ww = (d00 * d21 - d01 * d20) / denom;
-	uu = 1.0f - vv - ww;
-}
-
-// TODO: Using baycentric coordinates, I need to have A, B, C, the coordinates within each triangle.
 glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 120;
+	*_shininess = 100;
 	*_diffuse = colour;
-	*_specular = glm::vec3(30,30, 30);
+	*_specular = glm::vec3(0.5,0.5, 0.5);
 
-	glm::vec3 normX = getNormal(dynamic_cast<Triangle*>(meshArr[5]));
-	glm::vec3 normY = getNormal(dynamic_cast<Triangle*>(meshArr[6]));
-	glm::vec3 normZ = getNormal(dynamic_cast<Triangle*>(meshArr[7]));
-	glm::vec3 temp = glm::vec3(1, 0, 0);
-
-	return glm::normalize( (((u*temp) + (v*temp) + (w*temp))) );
+	float normalX = getNormalX(this->a, this->b, this->c);
+	float normalY = getNormalY(this->a, this->b, this->c);
+	float normalZ = getNormalZ(this->a, this->b, this->c);
+	getNormal(this);
+	glm::vec3(1, 0, 0);
+	return glm::vec3(1, 0, 0);
 }
 
 
@@ -521,3 +461,36 @@ ShadowAtt::ShadowAtt(glm::vec3 _pos, glm::vec3 _size) {
 ShadowAtt::~ShadowAtt() {
 
 }
+
+/*else {
+float sample = 2.0f;
+float totalRays = sample * sample;
+float uniformX = lightSize.x / sample;
+float uniformZ = lightSize.z / sample;
+float raysHit = 1.0f;
+for (float m = 0; m < lightSize.x; m += uniformX) {
+for (float n = 0; n < lightSize.z; n += uniformZ) {
+float t0s = 0.0f;
+float minTs = INFINITY;
+lightHitsMesh = -1;
+
+lightPos = glm::vec3(m, lightPos.y, n);
+lightRay = glm::normalize(lightPos - p0);
+for (int l = 0; l < sizeof(meshArr) / sizeof(meshArr[0]); l++) {
+if (sphereHit != l) {
+bool lightingHit = meshArr[l]->Intersection(p0 + (1e-4f * normal), lightRay, &t0s);
+if (lightingHit && t0s < minTs) {
+minTs = t0s;
+lightHitsMesh = l;
+}
+}
+}
+
+if (lightHitsMesh = -1)
+raysHit = raysHit + (1 / totalRays);
+}
+}
+glm::vec3 phongShade = glm::vec3((raysHit) * (diffuse + specular));
+phongShade = setToOrigRGB(phongShade);
+set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
+}*/

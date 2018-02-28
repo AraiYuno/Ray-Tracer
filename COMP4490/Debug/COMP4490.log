@@ -1,11 +1,13 @@
 ﻿  example.cpp
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(68): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(69): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(145): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(126): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(146): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(152): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(185): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(336): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(348): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(337): warning C4101: 'u1': unreferenced local variable
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(337): warning C4101: 'v1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(87): warning C4101: 'lightCentre': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(87): warning C4101: 'lightSize': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(292): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(304): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(293): warning C4101: 'u1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(293): warning C4101: 'v1': unreferenced local variable
   COMP4490.vcxproj -> C:\Users\Owner\Desktop\School\COMP 4490\A1\comp4490a1\comp4490\build\comp4490.exe

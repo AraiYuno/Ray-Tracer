@@ -13,7 +13,13 @@ Resource: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersectio
 Completed
 
 ## 4. Phong illumination model (non-recursive)
-Partially Completed.
+Completed
 
-## 5. Directional & Point Light
-- Point Light completed 
+## 5. Directional & Point Light (Multiple Light Sources
+Completed
+
+## 6. Shadow Attenuation
+Completed
+
+## 7. Light Attenuation
+Completed

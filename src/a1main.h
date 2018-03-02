@@ -3,19 +3,51 @@
 #include <FL/vector3.h>
 using namespace std;
 
+
 //Implement
 void trace(char *input_file, void *window, int width, int height);
 void pick(void *window, int x, int y);
 
-// to render the scene.
-void renderSI(void *window, int width, int height);
-glm::vec3 setToOrigRGB(glm::vec3 _colour);
 
 // use
 void set(void *window, int x, int y, unsigned char red, unsigned char green, unsigned char blue);
 bool get(void *window, int x, int y, unsigned char &red, unsigned char &green, unsigned char &blue);
 void redraw(void *window);
 
+// Different surface material types
+enum SurfaceMaterial { DIFFUSE_AND_GLOSSY, REFLECTION_AND_REFRACTION, REFLECTION };
+
+
+
+//======================================================================
+// Light
+//    stores the properties of a ray
+//======================================================================
+class Light {
+public:
+	glm::vec3 pos, intensity;
+	Light(void);
+	Light(const glm::vec3 _p, const glm::vec3 _i);
+	virtual void lights() = 0;
+};
+
+class PointLight : public Light {
+public:
+	PointLight(void);
+	PointLight(const glm::vec3 _p, const glm::vec3 _i);
+	void lights();
+};
+
+class DirLight : public Light {
+public:
+	DirLight(void);
+	DirLight(const glm::vec3 _p, const glm::vec3 _I);
+	void lights();
+};
+
+
+
+glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
 
 //======================================================================
 // Mesh 
@@ -23,13 +55,16 @@ void redraw(void *window);
 //======================================================================
 class Mesh {
 public:
-	glm::vec3 pos, colour, N;
+	glm::vec3 pos, colour, N, diffuseColour;
+	float Kd, Ks, specularExponent;
+	SurfaceMaterial surfaceMaterial;
 	Mesh(void);
 	Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N);
 
 	virtual bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	virtual glm::vec3 calNormal(int *shininess, glm::vec3 _p0, glm::vec3 *diffuse, glm::vec3 *specular);
 };
+
 
 //======================================================================
 // Sphere Intersection
@@ -87,3 +122,13 @@ public:
 	ShadowAtt(glm::vec3 _pos, glm::vec3 _size);
 	~ShadowAtt();
 };
+
+
+
+// to render the scene.
+void renderSI(void *window, int width, int height);
+void createMeshes(Mesh *meshes[]);
+void createLights(Light *Lights[]);
+bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *t, int &meshHitIndex, Mesh **hitMesh);
+glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection , int depth);
+glm::vec3 setToOrigRGB(glm::vec3 _colour);

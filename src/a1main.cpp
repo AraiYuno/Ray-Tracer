@@ -195,7 +195,6 @@ int main(int argc, char *argv[])
 	int w = 640, h = 480;
 
 	std::regex wh("([0-9]+)[xX]([0-9]+)");
-
 	for (int i = 1; i < argc; i++) {
 		if (0 == strncmp(argv[i], "-h", 2)) {
 			printf("Usage: %s [WIDTHxHEIGHT] [inputfile]...\n", argv[0]);

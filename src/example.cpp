@@ -85,13 +85,19 @@ glm::vec3 setToOrigRGB(glm::vec3 _colour) {
 
 void createMeshes(Mesh *meshes[]) {
 	// SPHERE
-	meshes[0] = new Sphere(glm::vec3(5, 5, -15), glm::vec3(1.0f, 0.0f, 0.0f), 1); // RED SHPERE
-	meshes[1] = new Sphere(glm::vec3(0, -105, -50), glm::vec3(0.1f, 0.1f, 0.1f), 100); // dark Floor
-	meshes[2] = new Sphere(glm::vec3(7, -3, -15), glm::vec3(1.0f, 1.0f, 0), 2); // YEE
-	meshes[3] = new Sphere(glm::vec3(6, 0, -15), glm::vec3(1.0f, 1.0f, 1.0f), 1.5); // WHITE SPHERE
-	meshes[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2);  // YELLOW SHPERE
+	meshes[0] = new Sphere(glm::vec3(10, -1, -18), glm::vec3(1.0f, 0.0f, 0.0f), 1, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // RED SHPERE
+	meshes[1] = new Sphere(glm::vec3(0, -105, -50), glm::vec3(0.1f, 0.1f, 0.1f), 100, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // dark Floor
+	meshes[2] = new Sphere(glm::vec3(9, -3, -15), glm::vec3(1.0f, 1.0f, 0), 3, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // YEE
+	meshes[3] = new Sphere(glm::vec3(5, 0, -15), glm::vec3(1.0f, 1.0f, 1.0f), 1.5, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // WHITE SPHERE
+	meshes[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0));  // YELLOW SHPERE
+
 	meshes[2]->surfaceMaterial = REFLECTION;
-	meshes[2]->ior = 1.3f;
+	meshes[2]->ior = 1.5f;
 																				  // TRIANGULAR MESH
 	meshes[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // EMERALD TRIANGLE // u -> CAP
 	meshes[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // v -> ABP
@@ -108,12 +114,17 @@ void createLights(Light *Lights[]) {
 	lights[1] = new DirLight(glm::vec3(-30, 30, -30), glm::vec3(1, 1, 1));
 }
 
+float mix(const float &a, const float &b, const float &mix)
+{
+	return b * mix + a * (1 - mix);
+}
+
 glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth) {
 	if (depth > maxDepth) // if it's higher than the maxDepth, we just return a white colour
-		return glm::vec3(255, 255, 255);
+		return glm::vec3(0.78, 0.67, 0.65);
 	glm::vec3 phongShade = glm::vec3(0);
 	glm::vec3 ambientShade = glm::vec3(0);
-	glm::vec3 hitColour = glm::vec3(255, 255, 255);
+	glm::vec3 hitColour = glm::vec3(0.78, 0.67, 0.65);
 	float tNear = 0.0f;
 	int hitMeshIndex = 0;
 	Mesh *hitMesh = nullptr;
@@ -147,6 +158,7 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 					// DISTANCE ANNUTATION
 					float distance = glm::distance(lights[i]->pos, p0);
 					float attenuation = 1.0f / (0.005 + 0.0025*distance + 0.0010*distance*distance);
+;
 
 					float tNearShadow = INFINITY;
 					Mesh * shadowHitMesh = nullptr;
@@ -157,7 +169,6 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 					else {
 						phongShade += (specular + diffuse)*attenuation;
 					}
-
 				}
 				hitColour = ambientShade + phongShade;
 				break;
@@ -173,26 +184,34 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 				glm::vec3 reflectionColour = castRay(reflectionRayOrig, reflectionDirection, depth + 1) * kr;
 				hitColour = phongShade + reflectionColour;
 				break;*/
-
+				float kr;
+				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
+				glm::vec3 reflectionDirection = reflect(_rayDirection, N);
+				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
+					p0 + N * options.bias :
+					p0 - N * options.bias;
 				glm::vec3 R = reflect(_rayDirection, N);
-				hitColour = 0.8f * castRay(p0 + N * options.bias, R, depth + 1);
+				hitColour = (kr*13.0f) * castRay(reflectionRayOrig, reflectionDirection, depth + 1);
 				break;
 			}
 			case REFLECTION_AND_REFRACTION:
 			{
-				glm::vec3 reflectionDirection = glm::normalize(reflect(_rayDirection, N));
-				glm::vec3 refractionDirection = glm::normalize(refract(_rayDirection, N, hitMesh->ior));
-				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
-					p0 + N * options.bias :
-					p0 - N * options.bias;
-				glm::vec3 refractionRayOrig = (glm::dot(refractionDirection, N) < 0) ?
-					p0 - N * options.bias :
-					p0 + N * options.bias;
-				glm::vec3 reflectionColor = castRay(reflectionRayOrig, reflectionDirection, depth + 1 );
-				glm::vec3 refractionColor = castRay(refractionRayOrig, refractionDirection, depth + 1 );
-				float kr;
-				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
-				hitColour = reflectionColor * kr; // +refractionColor * (1 - kr);
+				//glm::vec3 reflectionDirection = glm::normalize(reflect(_rayDirection, N));
+				//glm::vec3 refractionDirection = glm::normalize(refract(_rayDirection, N, hitMesh->ior));
+				//glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
+				//	p0 + N * options.bias :
+				//	p0 - N * options.bias;
+				//glm::vec3 refractionRayOrig = (glm::dot(refractionDirection, N) < 0) ?
+				//	p0 - N * options.bias :
+				//	p0 + N * options.bias;
+				//glm::vec3 reflectionColor = castRay(p0, reflectionDirection, depth + 1 );
+				//glm::vec3 refractionColor = castRay(p0, refractionDirection, depth + 1 );
+
+				////setToOrigRGB(refractionColor);
+				////refractionColor = refractionColor / 255.0f;
+				//float kr;
+				//fresnel(_rayDirection, N, &hitMesh->ior, &kr);
+				//hitColour = 9*kr * refractionColor; //  +refractionColor * (1 - (13.0f*kr));
 				break;
 			}
 		}
@@ -227,10 +246,10 @@ float clamp(const float _lo, const float _hi, const float _v){
 }
 
 
-void fresnel(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior, float *kr)
+void fresnel(const glm::vec3 _I, const glm::vec3 _N, const float *ior, float *kr)
 {
 	float cosi = clamp(-1, 1, glm::dot(_I, _N));
-	float etai = 1, etat = *ior;
+	float etai = 1, etat = (*ior);
 	if (cosi > 0) { std::swap(etai, etat); }
 	// Compute sini using Snell's law
 	float sint = etai / etat * sqrtf(glm::max(0.f, 1 - cosi * cosi));
@@ -346,10 +365,15 @@ Sphere::Sphere(void) {
 	colour = glm::vec3(0, 0, 0);
 }
 
-Sphere::Sphere(glm::vec3 _position, glm::vec3 _colour, float _radius) {
-	pos = _position;
+Sphere::Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius, glm::vec3 _diffuseColour,
+	glm::vec3 _specularColour, glm::vec3 _reflectiveColour, glm::vec3 _transmissive) {
+	pos = _pos;
 	colour = _colour;
 	radius = _radius;
+	diffuseColour = _diffuseColour;
+	specularColour = _specularColour;
+	reflectiveColour = _reflectiveColour;
+	transmissive = _transmissive;
 }
 
 //======================================================================================

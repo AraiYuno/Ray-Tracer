@@ -11,8 +11,10 @@
 
 
 using namespace std;
+struct Options;
 
 //GLOBAL VARIABLE
+Options options;
 int maxDepth = 5;
 Mesh* meshArr[11];
 Light* lights[2];
@@ -58,6 +60,7 @@ void renderSI(void * window, int width, int height )
 			set(window, x, y, pixColour.x, pixColour.y, pixColour.z);
 		}
 	}
+	cout << "END" << endl;
 }
 
 glm::vec3 setToOrigRGB(glm::vec3 _colour) {
@@ -83,11 +86,12 @@ glm::vec3 setToOrigRGB(glm::vec3 _colour) {
 void createMeshes(Mesh *meshes[]) {
 	// SPHERE
 	meshes[0] = new Sphere(glm::vec3(5, 5, -15), glm::vec3(1.0f, 0.0f, 0.0f), 1); // RED SHPERE
-	meshes[1] = new Sphere(glm::vec3(0, -10005, -50), glm::vec3(0.1f, 0.1f, 0.1f), 10000); // dark Floor
-	meshes[2] = new Sphere(glm::vec3(7, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2); // BLUE SPHERE
+	meshes[1] = new Sphere(glm::vec3(0, -105, -50), glm::vec3(0.1f, 0.1f, 0.1f), 100); // dark Floor
+	meshes[2] = new Sphere(glm::vec3(7, -3, -15), glm::vec3(1.0f, 1.0f, 0), 2); // YEE
 	meshes[3] = new Sphere(glm::vec3(6, 0, -15), glm::vec3(1.0f, 1.0f, 1.0f), 1.5); // WHITE SPHERE
 	meshes[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2);  // YELLOW SHPERE
-
+	meshes[2]->surfaceMaterial = REFLECTION;
+	meshes[2]->ior = 1.3f;
 																				  // TRIANGULAR MESH
 	meshes[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // EMERALD TRIANGLE // u -> CAP
 	meshes[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // v -> ABP
@@ -129,7 +133,7 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 					glm::vec3 lightDirection = glm::vec3(0);
 					if (dynamic_cast<DirLight*>(lights[i]))
 						lightDirection = glm::normalize(lights[i]->pos);
-					else 
+					else
 						lightDirection = glm::normalize(lights[i]->pos - p0);
 
 					// AMBIENT
@@ -153,8 +157,42 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 					else {
 						phongShade += (specular + diffuse)*attenuation;
 					}
+
 				}
 				hitColour = ambientShade + phongShade;
+				break;
+			}
+			case REFLECTION:
+			{
+				/*float kr;
+				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
+				glm::vec3 reflectionDirection = reflect(_rayDirection, N);
+				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
+					p0 + N * options.bias :
+					p0 - N * options.bias;
+				glm::vec3 reflectionColour = castRay(reflectionRayOrig, reflectionDirection, depth + 1) * kr;
+				hitColour = phongShade + reflectionColour;
+				break;*/
+
+				glm::vec3 R = reflect(_rayDirection, N);
+				hitColour = 0.8f * castRay(p0 + N * options.bias, R, depth + 1);
+				break;
+			}
+			case REFLECTION_AND_REFRACTION:
+			{
+				glm::vec3 reflectionDirection = glm::normalize(reflect(_rayDirection, N));
+				glm::vec3 refractionDirection = glm::normalize(refract(_rayDirection, N, hitMesh->ior));
+				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
+					p0 + N * options.bias :
+					p0 - N * options.bias;
+				glm::vec3 refractionRayOrig = (glm::dot(refractionDirection, N) < 0) ?
+					p0 - N * options.bias :
+					p0 + N * options.bias;
+				glm::vec3 reflectionColor = castRay(reflectionRayOrig, reflectionDirection, depth + 1 );
+				glm::vec3 refractionColor = castRay(refractionRayOrig, refractionDirection, depth + 1 );
+				float kr;
+				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
+				hitColour = reflectionColor * kr; // +refractionColor * (1 - kr);
 				break;
 			}
 		}
@@ -184,9 +222,48 @@ bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float
 	return (*_hitMesh != nullptr);
 }
 
+float clamp(const float _lo, const float _hi, const float _v){
+	return glm::max(_lo, glm::min(_hi, _v));
+}
+
+
+void fresnel(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior, float *kr)
+{
+	float cosi = clamp(-1, 1, glm::dot(_I, _N));
+	float etai = 1, etat = *ior;
+	if (cosi > 0) { std::swap(etai, etat); }
+	// Compute sini using Snell's law
+	float sint = etai / etat * sqrtf(glm::max(0.f, 1 - cosi * cosi));
+	// Total internal reflection
+	if (sint >= 1) {
+		*kr = 1;
+	}
+	else {
+		float cost = sqrtf(glm::max(0.f, 1 - sint * sint));
+		cosi = fabsf(cosi);
+		float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+		float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+		*kr = (Rs * Rs + Rp * Rp) / 2;
+	}
+	// As a consequence of the conservation of energy, transmittance is given by:
+	// kt = 1 - kr;
+}
+
 
 glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N) {
 	return _I - 2 * glm::dot(_I, _N) *_N;
+}
+
+glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior)
+{
+	float cosi = clamp(-1, 1, glm::dot(_I, _N));
+	float etai = 1, etat = *ior;
+	glm::vec3 n = _N;
+	if (cosi < 0) { cosi = -cosi; }
+	else { std::swap(etai, etat); n = -_N; }
+	float eta = etai / etat;
+	float k = 1 - eta * eta * (1 - cosi * cosi);
+	return k < 0 ? glm::vec3(0) : eta * _I + (eta * cosi - sqrtf(k)) * n;
 }
 
 
@@ -231,6 +308,7 @@ Mesh::Mesh(void) {
 	surfaceMaterial = DIFFUSE_AND_GLOSSY;
 	Kd = 0.8;
 	Ks = 0.2;
+	ior = 1.0;
 	diffuseColour = glm::vec3(0.8);
 	specularExponent = 25;
 }
@@ -242,6 +320,7 @@ Mesh::Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N) {
 	surfaceMaterial = DIFFUSE_AND_GLOSSY;
 	Kd = 0.8;
 	Ks = 0.2;
+	ior = 1.0;
 	diffuseColour = glm::vec3(0.8);
 	specularExponent = 25;
 }

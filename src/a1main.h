@@ -3,6 +3,12 @@
 #include <FL/vector3.h>
 using namespace std;
 
+//options.
+struct Options {
+	float fov = 90, bias = 0.0001;
+	int maxDepth = 5;
+};
+
 
 //Implement
 void trace(char *input_file, void *window, int width, int height);
@@ -56,7 +62,7 @@ glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
 class Mesh {
 public:
 	glm::vec3 pos, colour, N, diffuseColour;
-	float Kd, Ks, specularExponent;
+	float Kd, Ks, specularExponent, ior;
 	SurfaceMaterial surfaceMaterial;
 	Mesh(void);
 	Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N);
@@ -129,6 +135,9 @@ public:
 void renderSI(void *window, int width, int height);
 void createMeshes(Mesh *meshes[]);
 void createLights(Light *Lights[]);
+void fresnel(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior, float *kr);
 bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *t, int &meshHitIndex, Mesh **hitMesh);
 glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection , int depth);
 glm::vec3 setToOrigRGB(glm::vec3 _colour);
+glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior);
+float clamp(const float _lo, const float _hi, const float _v);

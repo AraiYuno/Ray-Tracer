@@ -23,3 +23,12 @@ Completed
 
 ## 7. Light Attenuation
 Completed
+
+## 8. Recursive Reflection
+Completed
+
+## 9. Recursive Refraction
+Partially Completed
+
+## 10. Acceleration Structure: Bounding Volume Hierarchy
+Partially Completed

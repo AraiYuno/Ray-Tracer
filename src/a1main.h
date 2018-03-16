@@ -1,11 +1,12 @@
 #include <iostream>
+#include <list>
 #include <glm/glm.hpp>
 #include <FL/vector3.h>
 using namespace std;
 
-//options.
+
 struct Options {
-	float fov = 90, bias = 0.0001;
+	float fov = 90, bias = 1e-5f;
 	int maxDepth = 5;
 };
 
@@ -113,8 +114,8 @@ public:
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
 	glm::vec3 getNormalPlane(glm::vec3 _p0);
+	glm::vec3 getbBounds() { return *this->bounds; }
 };
-
 
 
 
@@ -131,14 +132,53 @@ public:
 };
 
 
-
 // to render the scene.
 void renderSI(void *window, int width, int height);
 void createMeshes(Mesh *meshes[]);
 void createLights(Light *Lights[]);
 void fresnel(const glm::vec3 _I, const glm::vec3 _N, const float *ior, float *kr);
-bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *t, int &meshHitIndex, Mesh **hitMesh);
-glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection , int depth);
-glm::vec3 setToOrigRGB(glm::vec3 _colour);
 glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior);
+glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
+bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *t, int &meshHitIndex, Mesh **hitMesh);
+glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth);
+glm::vec3 setToOrigRGB(glm::vec3 _colour);
 float clamp(const float _lo, const float _hi, const float _v);
+glm::vec3 findMaxCoordinate(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c);
+glm::vec3 findMinCoordinate(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c);
+
+// Node to be used in BVH. I am using binary tree structure for my BVH
+
+class Node {
+	Box *bbox;
+	Node *left, *right;
+	list<Mesh*> *meshList;
+
+public:
+	Node(void);
+
+	// Mutators
+	void setLeft(Node *next);
+	void setRight(Node *right);
+	Node getLeft();
+	Node getRight();
+	void setBBox(Box *bbox);
+	Box getBBox();
+	void addMesh(Mesh* mesh);
+	void setMeshList(list<Mesh*> *meshList);
+	list<Mesh*> getMeshList();
+};
+
+
+class BVH {
+
+
+public: 
+	Node * root;
+	// This function takes in all the objects and creates a BVH tree.
+	BVH(void);
+	void initiateBVH();
+	void setBBox(Node *curr);
+	void listSplit(Node *curr, Node *tempLeft, Node *tempRight);
+	bool buildBVH(Node *curr);
+};
+

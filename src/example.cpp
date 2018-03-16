@@ -33,6 +33,8 @@ void pick(void *window, int x, int y) {
 	}
 }
 
+
+
 //=================================================================================
 //renderSI
 //  renders sphere intersection using raytracing.
@@ -97,7 +99,7 @@ void createMeshes(Mesh *meshes[]) {
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0));  // YELLOW SHPERE
 
 	meshes[2]->surfaceMaterial = REFLECTION;
-	meshes[2]->ior = 1.5f;
+	meshes[2]->ior = 1.3f;
 																				  // TRIANGULAR MESH
 	meshes[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // EMERALD TRIANGLE // u -> CAP
 	meshes[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // v -> ABP
@@ -119,6 +121,7 @@ float mix(const float &a, const float &b, const float &mix)
 	return b * mix + a * (1 - mix);
 }
 
+
 glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth) {
 	if (depth > maxDepth) // if it's higher than the maxDepth, we just return a white colour
 		return glm::vec3(0.78, 0.67, 0.65);
@@ -129,6 +132,7 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 	int hitMeshIndex = 0;
 	Mesh *hitMesh = nullptr;
 	// if there is an intersetion with a mesh in the scene
+	// Here I need the BVH function to quickly determine if i need to traceRay or not
 	if (traceRay(_rayOrigin, _rayDirection, &tNear, hitMeshIndex, &hitMesh)) {
 		glm::vec3 p0 = _rayOrigin + _rayDirection * tNear;
 		glm::vec3 diffuseColour, specularColour;
@@ -190,28 +194,18 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
 					p0 + N * options.bias :
 					p0 - N * options.bias;
-				glm::vec3 R = reflect(_rayDirection, N);
 				hitColour = (kr*13.0f) * castRay(reflectionRayOrig, reflectionDirection, depth + 1);
 				break;
 			}
 			case REFLECTION_AND_REFRACTION:
 			{
-				//glm::vec3 reflectionDirection = glm::normalize(reflect(_rayDirection, N));
-				//glm::vec3 refractionDirection = glm::normalize(refract(_rayDirection, N, hitMesh->ior));
-				//glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
-				//	p0 + N * options.bias :
-				//	p0 - N * options.bias;
-				//glm::vec3 refractionRayOrig = (glm::dot(refractionDirection, N) < 0) ?
-				//	p0 - N * options.bias :
-				//	p0 + N * options.bias;
-				//glm::vec3 reflectionColor = castRay(p0, reflectionDirection, depth + 1 );
-				//glm::vec3 refractionColor = castRay(p0, refractionDirection, depth + 1 );
-
-				////setToOrigRGB(refractionColor);
-				////refractionColor = refractionColor / 255.0f;
-				//float kr;
-				//fresnel(_rayDirection, N, &hitMesh->ior, &kr);
-				//hitColour = 9*kr * refractionColor; //  +refractionColor * (1 - (13.0f*kr));
+				glm::vec3 refractionDirection = glm::normalize(refract(_rayDirection, N, hitMesh->ior));
+				glm::vec3 refractionRayOrig = (glm::dot(refractionDirection, N) < 0) ?
+					p0 - N * options.bias :
+					p0 + N * options.bias;
+				float kr;
+				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
+				hitColour = castRay(refractionRayOrig, refractionDirection, depth + 1); //  +refractionColor * (1 - (13.0f*kr));
 				break;
 			}
 		}
@@ -219,7 +213,6 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 	}
 	return hitColour;
 }
-
 //=======================================================================================
 // trace
 //   returns true if the ray intersects with an object. This function also assign t and
@@ -272,6 +265,7 @@ void fresnel(const glm::vec3 _I, const glm::vec3 _N, const float *ior, float *kr
 glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N) {
 	return _I - 2 * glm::dot(_I, _N) *_N;
 }
+
 
 glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior)
 {
@@ -614,35 +608,160 @@ ShadowAtt::~ShadowAtt() {
 
 }
 
-/*else {
-float sample = 2.0f;
-float totalRays = sample * sample;
-float uniformX = lightSize.x / sample;
-float uniformZ = lightSize.z / sample;
-float raysHit = 1.0f;
-for (float m = 0; m < lightSize.x; m += uniformX) {
-for (float n = 0; n < lightSize.z; n += uniformZ) {
-float t0s = 0.0f;
-float minTs = INFINITY;
-lightHitsMesh = -1;
 
-lightPos = glm::vec3(m, lightPos.y, n);
-lightRay = glm::normalize(lightPos - p0);
-for (int l = 0; l < sizeof(meshArr) / sizeof(meshArr[0]); l++) {
-if (sphereHit != l) {
-bool lightingHit = meshArr[l]->Intersection(p0 + (1e-4f * normal), lightRay, &t0s);
-if (lightingHit && t0s < minTs) {
-minTs = t0s;
-lightHitsMesh = l;
-}
-}
+
+///=================================================================================
+/// Acceleration Structure -> BVH
+///
+///
+///
+///=================================================================================
+
+//==================================================================================
+// buildBVH()
+//  This function uses the global meshArr[] array and makes a list of BBOXes depending
+//  on different meshes( Sphere, Box and Triangle ).
+//==================================================================================
+Node::Node(void) {
+	this->bbox = nullptr;
+	this->left = nullptr;
+	this->right = nullptr;
+	this->meshList = new list<Mesh*>();
 }
 
-if (lightHitsMesh = -1)
-raysHit = raysHit + (1 / totalRays);
+void Node::setLeft(Node *left) { this->left = left; }
+Node Node::getLeft() { return *this->left;  }
+
+void Node::setRight(Node *right) { this->right = right; }
+Node Node::getRight() { return *this->right; }
+
+void Node::setBBox(Box *bbox) { this->bbox = bbox; }
+Box Node::getBBox() { return *this->bbox;  }
+
+void Node::addMesh(Mesh *mesh) { this->meshList->push_back(mesh); }
+void Node::setMeshList(list<Mesh*> *meshList) { this->meshList = meshList; }
+list<Mesh*> Node::getMeshList() { return *this->meshList; }
+
+
+//===============================================================================
+// BVH constructor
+//   it creates a new root node inside BVH hierarchy.
+//===============================================================================
+BVH::BVH(void) {
+	this->root = new Node();
+	initiateBVH();
 }
+
+
+//===============================================================================
+// initiateBVH
+//   this function initates BVH structure and set the root node.
+//===============================================================================
+void BVH::initiateBVH() {
+	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++)
+		this->root->addMesh(meshArr[i]);
 }
-glm::vec3 phongShade = glm::vec3((raysHit) * (diffuse + specular));
-phongShade = setToOrigRGB(phongShade);
-set(window, x, y, phongShade.x, phongShade.y, phongShade.z);
-}*/
+
+//===============================================================================
+// setBBox
+//   this function takes in Node as a parameter and sets a bounding box by finding
+//   min pos and max pos out of all the meshes in the list of the given node
+//===============================================================================
+void BVH::setBBox(Node *curr) {
+	list<Mesh*> tempMeshList = curr->getMeshList();
+	float maxX = tempMeshList.front()->pos.x, maxY = tempMeshList.front()->pos.y, maxZ = tempMeshList.front()->pos.z
+		, minX = tempMeshList.front()->pos.x, minY = tempMeshList.front()->pos.y, minZ = tempMeshList.front()->pos.z;
+	Mesh *tempMesh;
+	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
+		tempMesh = &**it;
+		if (tempMesh->pos.x > maxX)
+			maxX = tempMesh->pos.x;
+		if (tempMesh->pos.y > maxY)
+			maxY = tempMesh->pos.y;
+		if (tempMesh->pos.z > maxZ)
+			maxZ = tempMesh->pos.z;
+
+		if (tempMesh->pos.x < minX)
+			minX = tempMesh->pos.x;
+		if (tempMesh->pos.y < minY)
+			minY = tempMesh->pos.y;
+		if (tempMesh->pos.z < minZ)
+			minZ = tempMesh->pos.z;
+	}
+	glm::vec3 b0 = glm::vec3(minX, minY, minZ);
+	glm::vec3 b1 = glm::vec3(maxX, maxY, maxZ);
+	curr->setBBox(new Box(b0, b1, glm::vec3(0)));
+}
+
+
+//===============================================================================
+// listSplit
+//   -this function is my BVH split heuristic.
+//   -The idea is that I find the two objects that are furthest to one another and
+//    compute the midpoint of these 2. Then, I split the curr's list into left and
+//    right lists.
+//===============================================================================
+void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
+	list<Mesh*> tempMeshList = curr->getMeshList();
+	list<Mesh*> *listLeft = new list<Mesh*>();
+	list<Mesh*> *listRight = new list<Mesh*>();
+
+	Box bbox = curr->getBBox();
+	glm::vec3 b0 = bbox.bounds[0];
+	glm::vec3 b1 = bbox.bounds[1];
+	float b0MinDistance = glm::distance(tempMeshList.front()->pos, b0);
+	float b1MinDistance = glm::distance(tempMeshList.front()->pos, b1);
+	Mesh *b0MinMesh = tempMeshList.front();
+	Mesh *b1minMesh = tempMeshList.front();
+	Mesh *tempMesh = nullptr;
+	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
+		tempMesh = &**it;
+		float tempb0MinDistance = glm::distance(tempMesh->pos, b0);
+		float tempb1MinDistance = glm::distance(tempMesh->pos, b1);
+		if ( tempb0MinDistance < b0MinDistance) {
+			b0MinDistance = tempb0MinDistance;
+			b0MinMesh = tempMesh;
+		}
+		if (tempb1MinDistance < b1MinDistance) {
+			b1MinDistance = tempb1MinDistance;
+			b1minMesh = tempMesh;
+		}
+	}
+
+	// if tempMesh is closer to b0, then we put it into the leftList, otherwise rightList.
+	tempMesh = nullptr;
+	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
+		tempMesh = &**it;
+		if (glm::distance(b0MinMesh->pos, tempMesh->pos) < glm::distance(b1minMesh->pos, tempMesh->pos)) {
+			if (tempMesh != b1minMesh && tempMesh != b0MinMesh) {
+				listLeft->push_back(tempMesh);
+			}
+		}
+		else {
+			if (tempMesh != b1minMesh && tempMesh != b0MinMesh) {
+				listRight->push_back(tempMesh);
+			}
+		}
+	}
+	tempLeft->setMeshList(listLeft);
+	tempRight->setMeshList(listRight);
+}
+
+
+//===============================================================================
+// buildBVH
+//   this is the main function to build a BVH recursively. When this function is
+//   completed, this->root will have the root node of the entire tree.
+//===============================================================================
+bool BVH::buildBVH(Node *curr) {
+	setBBox(curr); // This sets the BBOX for the current node
+	if (curr->getMeshList().size() <= 1) // BASE CASE
+		return true;
+	Node *leftNode = new Node();
+	Node *rightNode = new Node();
+	curr->setLeft(leftNode);
+	curr->setRight(rightNode);
+	listSplit(curr, leftNode, rightNode);  // so leftNode and rightNode now contains the lists
+	this->buildBVH(leftNode);
+	return this->buildBVH(rightNode);
+}

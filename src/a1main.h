@@ -62,6 +62,7 @@ glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
 //======================================================================
 class Mesh {
 public:
+	int num;
 	glm::vec3 pos, colour, N, diffuseColour, specularColour, reflectiveColour, transmissive;
 	float Kd, Ks, specularExponent, ior;
 	SurfaceMaterial surfaceMaterial;
@@ -69,7 +70,15 @@ public:
 	Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N);
 
 	virtual bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
+	virtual glm::vec3 centroid();
 	virtual glm::vec3 calNormal(int *shininess, glm::vec3 _p0, glm::vec3 *diffuse, glm::vec3 *specular);
+
+	virtual float getMinX();
+	virtual float getMinY();
+	virtual float getMinZ();
+	virtual float getMaxX();
+	virtual float getMaxY();
+	virtual float getMaxZ();
 };
 
 
@@ -84,7 +93,15 @@ public:
 	Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius, glm::vec3 _diffuseColour, 
 			glm::vec3 _specularColour, glm::vec3 _reflectiveColour, glm::vec3 _transmissive);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
+	glm::vec3 centroid();
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+
+	float getMinX();
+	float getMinY();
+	float getMinZ();
+	float getMaxX();
+	float getMaxY();
+	float getMaxZ();
 };
 
 
@@ -99,7 +116,15 @@ public:
 	Triangle(void);
 	Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
+	glm::vec3 centroid();
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+
+	float getMinX();
+	float getMinY();
+	float getMinZ();
+	float getMaxX();
+	float getMaxY();
+	float getMaxZ();
 };
 
 
@@ -115,6 +140,14 @@ public:
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
 	glm::vec3 getNormalPlane(glm::vec3 _p0);
 	glm::vec3 getbBounds() { return *this->bounds; }
+	glm::vec3 centroid();
+
+	float getMinX();
+	float getMinY();
+	float getMinZ();
+	float getMaxX();
+	float getMaxY();
+	float getMaxZ();
 };
 
 

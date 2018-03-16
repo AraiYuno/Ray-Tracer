@@ -5,15 +5,12 @@
 #include "a1main.h"
 
 
-// THINGS TO BE DONE
-// 1. Trinagle Normal calcualtion
-// 3. 
-
 
 using namespace std;
 struct Options;
 
 //GLOBAL VARIABLE
+BVH* bvh;
 Options options;
 int maxDepth = 5;
 Mesh* meshArr[11];
@@ -42,8 +39,11 @@ void pick(void *window, int x, int y) {
 //=================================================================================
 void renderSI(void * window, int width, int height )
 {
+	list<Mesh*> *listlist = new list<Mesh*>();
+	listlist->size();
 	createMeshes(meshArr);
 	createLights(lights);
+	bvh = new BVH();
 	glm::vec3 **image = new glm::vec3*[width];
 	for (int i = 0; i < width; i++) 
 		image[i] = new glm::vec3[height];
@@ -89,7 +89,7 @@ void createMeshes(Mesh *meshes[]) {
 	// SPHERE
 	meshes[0] = new Sphere(glm::vec3(10, -1, -18), glm::vec3(1.0f, 0.0f, 0.0f), 1, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // RED SHPERE
-	meshes[1] = new Sphere(glm::vec3(0, -105, -50), glm::vec3(0.1f, 0.1f, 0.1f), 100, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	meshes[1] = new Sphere(glm::vec3(3, 5, -15), glm::vec3(0.1f, 0.1f, 0.1f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // dark Floor
 	meshes[2] = new Sphere(glm::vec3(9, -3, -15), glm::vec3(1.0f, 1.0f, 0), 3, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // YEE
@@ -97,7 +97,6 @@ void createMeshes(Mesh *meshes[]) {
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // WHITE SPHERE
 	meshes[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0));  // YELLOW SHPERE
-
 	meshes[2]->surfaceMaterial = REFLECTION;
 	meshes[2]->ior = 1.3f;
 																				  // TRIANGULAR MESH
@@ -109,6 +108,10 @@ void createMeshes(Mesh *meshes[]) {
 																																   // BOXES
 	meshes[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(0.20f, 0.20f, 1.0f));
 	meshes[10] = new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(1.0f, 0.078f, 0.58f));
+
+	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++) {
+		meshes[i]->num = i;
+	}
 }
 
 void createLights(Light *Lights[]) {
@@ -343,9 +346,21 @@ bool Mesh::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
 	return false;
 }
 
+glm::vec3 Mesh::centroid() {
+	return this->pos;
+}
+
 glm::vec3 Mesh::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
 	return N;
 }
+
+float Mesh::getMaxX() { return this->pos.x; }
+float Mesh::getMaxY() { return this->pos.y; }
+float Mesh::getMaxZ() { return this->pos.z; }
+float Mesh::getMinX() { return this->pos.x; }
+float Mesh::getMinY() { return this->pos.y; }
+float Mesh::getMinZ() { return this->pos.z; }
+
 
 
 
@@ -396,6 +411,11 @@ bool Sphere::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *
 	}
 }
 
+
+glm::vec3 Sphere::centroid() {
+	return this->pos;
+}
+
 glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
 	*_shininess = 155;  // to give a glow effect
 	*_diffuse = colour;
@@ -403,6 +423,20 @@ glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse,
 	N = glm::normalize(_p0 - pos);
 	return N;
 }
+
+
+//========================================================================================
+// getMax/Min
+//   This function returns a max/min values for each of x, y and z.
+//========================================================================================
+float Sphere::getMaxX() { return this->pos.x + this->radius; }
+float Sphere::getMaxY() { return this->pos.y + this->radius; }
+float Sphere::getMaxZ() { return this->pos.z + this->radius; }
+float Sphere::getMinX() { return this->pos.x - this->radius; }
+float Sphere::getMinY() { return this->pos.y - this->radius; }
+float Sphere::getMinZ() { return this->pos.z - this->radius; }
+
+
 
 
 
@@ -465,6 +499,19 @@ bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float
 		return false;
 }
 
+
+//====================================================================================
+// centroid
+//    get coordinates of centroid of the triangle
+//====================================================================================
+glm::vec3 Triangle::centroid() {
+	float x = (this->a.x + this->b.x + this->c.x) / 3.0f;
+	float y = (this->a.y + this->b.y + this->c.y) / 3.0f;
+	float z = (this->a.z + this->b.z + this->c.z) / 3.0f;
+	return glm::vec3(x, y, z);
+}
+
+
 // Calculation for normal on 
 float getNormalX(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c) {
 	glm::vec3 A = _b - _a;
@@ -505,6 +552,20 @@ glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffus
 	glm::vec3 edge1 = glm::normalize(c - b);
 	return glm::normalize(glm::cross(edge0, edge1));
 }
+
+
+//========================================================================================
+// getMax/Min
+//   This function returns a max/min values for each of x, y and z.
+//========================================================================================
+float Triangle::getMaxX() { return glm::max(glm::max(this->a.x, this->b.x), this->c.x); }
+float Triangle::getMaxY() { return glm::max(glm::max(this->a.y, this->b.y), this->c.y); }
+float Triangle::getMaxZ() { return glm::max(glm::max(this->a.z, this->b.z), this->c.z); }
+float Triangle::getMinX() { return glm::min(glm::min(this->a.x, this->b.x), this->c.x); }
+float Triangle::getMinY() { return glm::min(glm::min(this->a.y, this->b.y), this->c.y); }
+float Triangle::getMinZ() { return glm::min(glm::min(this->a.z, this->b.z), this->c.z); }
+
+
 
 
 
@@ -588,6 +649,27 @@ glm::vec3 Box::getNormalPlane(glm::vec3 _p0) {
 	return toReturn;
 }
 
+glm::vec3 Box::centroid() {
+	glm::vec3 b0 = this->bounds[0];
+	glm::vec3 b1 = this->bounds[1];
+	float x = (b1.x + b0.x) / 2;
+	float y = (b1.y + b0.y) / 2;
+	float z = (b1.z + b0.z) / 2;
+	return glm::vec3(x, y, z);
+}
+
+
+//========================================================================================
+// getMax/Min
+//   This function returns a max/min values for each of x, y and z.
+//========================================================================================
+float Box::getMaxX() { return glm::max(this->bounds[0].x, this->bounds[1].x); }
+float Box::getMaxY() { return glm::max(this->bounds[0].y, this->bounds[1].y); }
+float Box::getMaxZ() { return glm::max(this->bounds[0].z, this->bounds[1].z); }
+float Box::getMinX() { return glm::min(this->bounds[0].x, this->bounds[1].x); }
+float Box::getMinY() { return glm::min(this->bounds[0].y, this->bounds[1].y); }
+float Box::getMinZ() { return glm::min(this->bounds[0].z, this->bounds[1].z); }
+
 
 
 // SHADOW ATTENUATION
@@ -650,6 +732,7 @@ list<Mesh*> Node::getMeshList() { return *this->meshList; }
 BVH::BVH(void) {
 	this->root = new Node();
 	initiateBVH();
+	buildBVH(this->root);
 }
 
 
@@ -669,27 +752,45 @@ void BVH::initiateBVH() {
 //===============================================================================
 void BVH::setBBox(Node *curr) {
 	list<Mesh*> tempMeshList = curr->getMeshList();
-	float maxX = tempMeshList.front()->pos.x, maxY = tempMeshList.front()->pos.y, maxZ = tempMeshList.front()->pos.z
-		, minX = tempMeshList.front()->pos.x, minY = tempMeshList.front()->pos.y, minZ = tempMeshList.front()->pos.z;
+	float zz = tempMeshList.front()->centroid().x;
+	float maxX = tempMeshList.front()->centroid().x, maxY = tempMeshList.front()->centroid().y, maxZ = tempMeshList.front()->centroid().z
+		, minX = tempMeshList.front()->centroid().x, minY = tempMeshList.front()->centroid().y, minZ = tempMeshList.front()->centroid().z;
 	Mesh *tempMesh;
+	Mesh *maxXMesh = tempMeshList.front(), *maxYMesh = tempMeshList.front(), *maxZMesh = tempMeshList.front(), 
+		 *minXMesh = tempMeshList.front(), *minYMesh = tempMeshList.front(), *minZMesh = tempMeshList.front();
 	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
 		tempMesh = &**it;
-		if (tempMesh->pos.x > maxX)
-			maxX = tempMesh->pos.x;
-		if (tempMesh->pos.y > maxY)
-			maxY = tempMesh->pos.y;
-		if (tempMesh->pos.z > maxZ)
-			maxZ = tempMesh->pos.z;
+		if (tempMesh->centroid().x > maxX) {
+			maxX = tempMesh->centroid().x;
+			maxXMesh = tempMesh;
+		}
+		if (tempMesh->centroid().y > maxY) {
+			maxY = tempMesh->centroid().y;
+			maxYMesh = tempMesh;
+		}
+		if (tempMesh->centroid().z > maxZ) {
+			maxZ = tempMesh->centroid().z;
+			maxZMesh = tempMesh;
+		}
 
-		if (tempMesh->pos.x < minX)
-			minX = tempMesh->pos.x;
-		if (tempMesh->pos.y < minY)
-			minY = tempMesh->pos.y;
-		if (tempMesh->pos.z < minZ)
-			minZ = tempMesh->pos.z;
+		if (tempMesh->centroid().x < minX) {
+			minX = tempMesh->centroid().x;
+			minXMesh = tempMesh;
+		}
+		if (tempMesh->centroid().y < minY) {
+			minY = tempMesh->centroid().y;
+			minYMesh = tempMesh;
+		}
+		if (tempMesh->centroid().z < minZ) {
+			minZ = tempMesh->centroid().z;
+			minZMesh = tempMesh;
+		}
 	}
-	glm::vec3 b0 = glm::vec3(minX, minY, minZ);
-	glm::vec3 b1 = glm::vec3(maxX, maxY, maxZ);
+
+	glm::vec3 b0 = glm::vec3(minXMesh->getMinX(), minYMesh->getMinY(), minZMesh->getMinZ());
+	glm::vec3 b1 = glm::vec3(maxXMesh->getMaxX(), maxYMesh->getMaxY(), maxZMesh->getMaxZ());
+	cout << "b0: " << b0.x << ", " << b0.y << ", " << b0.z << endl;
+	cout << "b1: " << b1.x << ", " << b1.y << ", " << b1.z << endl;
 	curr->setBBox(new Box(b0, b1, glm::vec3(0)));
 }
 
@@ -709,40 +810,58 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 	Box bbox = curr->getBBox();
 	glm::vec3 b0 = bbox.bounds[0];
 	glm::vec3 b1 = bbox.bounds[1];
-	float b0MinDistance = glm::distance(tempMeshList.front()->pos, b0);
-	float b1MinDistance = glm::distance(tempMeshList.front()->pos, b1);
-	Mesh *b0MinMesh = tempMeshList.front();
-	Mesh *b1minMesh = tempMeshList.front();
+	/*cout << "b0: " << b0.x << ", " << b0.y << ", " << b0.z << endl;
+	cout << "b1: " << b1.x << ", " << b1.y << ", " << b1.z << endl;*/
+	float b0NearDistance = glm::abs(glm::distance(tempMeshList.front()->centroid(), b0));
+	float b1NearDistance = glm::abs(glm::distance(tempMeshList.front()->centroid(), b1));
+	Mesh *b0NearMesh = tempMeshList.front();
+	Mesh *b1NearMesh = tempMeshList.front();
 	Mesh *tempMesh = nullptr;
 	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
 		tempMesh = &**it;
-		float tempb0MinDistance = glm::distance(tempMesh->pos, b0);
-		float tempb1MinDistance = glm::distance(tempMesh->pos, b1);
-		if ( tempb0MinDistance < b0MinDistance) {
-			b0MinDistance = tempb0MinDistance;
-			b0MinMesh = tempMesh;
+		float tempb0NearDistance = glm::abs(glm::distance(tempMesh->centroid(), b0));
+		float tempb1NearDistance = glm::abs(glm::distance(tempMesh->centroid(), b1));
+		if ( tempb0NearDistance < b0NearDistance) {
+			b0NearDistance = tempb0NearDistance;
+			b0NearMesh = tempMesh;
 		}
-		if (tempb1MinDistance < b1MinDistance) {
-			b1MinDistance = tempb1MinDistance;
-			b1minMesh = tempMesh;
+		if (tempb1NearDistance < b1NearDistance) {
+			b1NearDistance = tempb1NearDistance;
+			b1NearMesh = tempMesh;
 		}
 	}
+	/*cout << "b0NearMesh: " << b0NearMesh->centroid().x << ", " << b0NearMesh->centroid().y << ", " << b0NearMesh->centroid().z << endl;
+	cout << "b1NearMesh: " << b1NearMesh->centroid().x << ", " << b1NearMesh->centroid().y << ", " << b1NearMesh->centroid().z << endl;*/
 
 	// if tempMesh is closer to b0, then we put it into the leftList, otherwise rightList.
 	tempMesh = nullptr;
 	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
 		tempMesh = &**it;
-		if (glm::distance(b0MinMesh->pos, tempMesh->pos) < glm::distance(b1minMesh->pos, tempMesh->pos)) {
-			if (tempMesh != b1minMesh && tempMesh != b0MinMesh) {
+		if (abs(glm::distance(b0NearMesh->centroid(), tempMesh->centroid())) < glm::abs(glm::distance(b1NearMesh->centroid(), tempMesh->centroid()))) {
+			//if (tempMesh != b1NearMesh && tempMesh != b0NearMesh) {
 				listLeft->push_back(tempMesh);
-			}
+			//}
 		}
 		else {
-			if (tempMesh != b1minMesh && tempMesh != b0MinMesh) {
+			//if (tempMesh != b1NearMesh && tempMesh != b0NearMesh) {
 				listRight->push_back(tempMesh);
-			}
+			//}
 		}
 	}
+	list<Mesh*> leftIt = *listLeft;
+	list<Mesh*> righIt = *listRight;
+	tempMesh = nullptr;
+	for (list<Mesh*>::iterator it = leftIt.begin(); it != leftIt.end(); ++it) {
+		tempMesh = &**it;
+		cout << "LEFT NUM: " << tempMesh->num << endl;
+	}
+	tempMesh = nullptr;
+	for (list<Mesh*>::iterator it = righIt.begin(); it != righIt.end(); ++it) {
+		tempMesh = &**it;
+		cout << "RIGHT NUM: " << tempMesh->num << endl;
+	}
+	cout << "Left size" << listLeft->size() << endl;
+	cout << "Right size " << listRight->size() << endl;
 	tempLeft->setMeshList(listLeft);
 	tempRight->setMeshList(listRight);
 }
@@ -754,14 +873,15 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 //   completed, this->root will have the root node of the entire tree.
 //===============================================================================
 bool BVH::buildBVH(Node *curr) {
-	setBBox(curr); // This sets the BBOX for the current node
+	if ( curr->getMeshList().size() >= 1 )
+		setBBox(curr); // This sets the BBOX for the current node
 	if (curr->getMeshList().size() <= 1) // BASE CASE
 		return true;
 	Node *leftNode = new Node();
 	Node *rightNode = new Node();
 	curr->setLeft(leftNode);
 	curr->setRight(rightNode);
-	listSplit(curr, leftNode, rightNode);  // so leftNode and rightNode now contains the lists
+	listSplit(curr, leftNode, rightNode);  // so leftNode and rightNode now contains the lists	
 	this->buildBVH(leftNode);
 	return this->buildBVH(rightNode);
 }

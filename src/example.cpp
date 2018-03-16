@@ -91,7 +91,7 @@ void createMeshes(Mesh *meshes[]) {
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // RED SHPERE
 	meshes[1] = new Sphere(glm::vec3(3, 5, -15), glm::vec3(0.1f, 0.1f, 0.1f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // dark Floor
-	meshes[2] = new Sphere(glm::vec3(9, -3, -15), glm::vec3(1.0f, 1.0f, 0), 3, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	meshes[2] = new Sphere(glm::vec3(9, -3, -15), glm::vec3(1.0f, 1.0f, 0), 3.1f, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // YEE
 	meshes[3] = new Sphere(glm::vec3(5, 0, -15), glm::vec3(1.0f, 1.0f, 1.0f), 1.5, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // WHITE SPHERE
@@ -806,7 +806,7 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 	list<Mesh*> tempMeshList = curr->getMeshList();
 	list<Mesh*> *listLeft = new list<Mesh*>();
 	list<Mesh*> *listRight = new list<Mesh*>();
-
+	list<float> *distanceList = new list<float>();
 	Box bbox = curr->getBBox();
 	glm::vec3 b0 = bbox.bounds[0];
 	glm::vec3 b1 = bbox.bounds[1];
@@ -881,7 +881,10 @@ bool BVH::buildBVH(Node *curr) {
 	Node *rightNode = new Node();
 	curr->setLeft(leftNode);
 	curr->setRight(rightNode);
-	listSplit(curr, leftNode, rightNode);  // so leftNode and rightNode now contains the lists	
+	listSplit(curr, leftNode, rightNode);  // so leftNode and rightNode now contains the lists
+	if (curr->getLeft().getMeshList().size() == 0 || curr->getRight().getMeshList().size() == 0) {
+		return true;
+	}
 	this->buildBVH(leftNode);
 	return this->buildBVH(rightNode);
 }

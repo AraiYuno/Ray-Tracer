@@ -136,6 +136,7 @@ public:
 class Box : public Mesh {
 public:
 	glm::vec3 bounds[2];
+	Box(void);
 	Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
@@ -181,22 +182,13 @@ float clamp(const float _lo, const float _hi, const float _v);
 // Node to be used in BVH. I am using binary tree structure for my BVH
 
 class Node {
-	Box *bbox;
-	Node *left, *right;
-	list<Mesh*> *meshList;
-
 public:
 	Node(void);
 	// Mutators
-	void setLeft(Node *next);
-	void setRight(Node *right);
-	Node getLeft();
-	Node getRight();
-	void setBBox(Box *bbox);
-	Box getBBox();
 	void addMesh(Mesh* mesh);
-	void setMeshList(list<Mesh*> *meshList);
-	list<Mesh*> getMeshList();
+	Box *bbox;
+	Node *left, *right;
+	list<Mesh*> *meshList;
 
 	void printMeshes();
 };
@@ -214,6 +206,6 @@ public:
 	void listSplit(Node *curr, Node *tempLeft, Node *tempRight);
 	void traverseTest(Node *curr);
 	bool buildBVH(Node *curr);
-	bool Intersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit);
+	bool findIntersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit);
 };
 

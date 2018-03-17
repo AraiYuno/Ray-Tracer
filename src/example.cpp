@@ -47,7 +47,7 @@ void renderSI(void * window, int width, int height )
 	createMeshes(meshArr);
 	createLights(lights);
 	bvh = new BVH(); // Here we have built our acceleration structure.
-	bvh->traverseTest(bvh->root);
+	//bvh->traverseTest(bvh->root);
 	glm::vec3 **image = new glm::vec3*[width];
 	for (int i = 0; i < width; i++) 
 		image[i] = new glm::vec3[height];
@@ -62,11 +62,11 @@ void renderSI(void * window, int width, int height )
 			glm::vec3 rayOrigin = glm::vec3(0, 0, 0);
 			glm::vec3 rayDirection = glm::normalize(rayOrigin - PcamSpace);
 			glm::vec3 pixColour = options.backgroundColour;
-			//bool isHit = false;
-			//bvh->Intersection(bvh->root, rayOrigin, rayDirection, &isHit);
-			//if (isHit) {
+			bool isHit = false;
+			bvh->findIntersection(bvh->root, rayOrigin, rayDirection, &isHit);
+			if (isHit) {
 			pixColour = castRay(rayOrigin, rayDirection, 0);
-			//}
+			}
 			pixColour = setToOrigRGB(pixColour);
 			set(window, x, y, pixColour.x, pixColour.y, pixColour.z);
 		}
@@ -582,6 +582,13 @@ float Triangle::getMinZ() { return glm::min(glm::min(this->a.z, this->b.z), this
 //=======================================================================================
 //=======================================================================================
 //=======================================================================================
+Box::Box(void) {
+	bounds[0] = glm::vec3(0);
+	bounds[1] = glm::vec3(0);
+	colour = options.backgroundColour;
+}
+
+
 Box::Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour ) { 
 	bounds[0] = b0;
 	bounds[1] = b1;
@@ -714,24 +721,14 @@ ShadowAtt::~ShadowAtt() {
 //  on different meshes( Sphere, Box and Triangle ).
 //==================================================================================
 Node::Node(void) {
-	this->bbox = nullptr;
+	this->bbox = new Box();
 	this->left = nullptr;
 	this->right = nullptr;
 	this->meshList = new list<Mesh*>();
 }
 
-void Node::setLeft(Node *left) { this->left = left; }
-Node Node::getLeft() { return *this->left;  }
-
-void Node::setRight(Node *right) { this->right = right; }
-Node Node::getRight() { return *this->right; }
-
-void Node::setBBox(Box *bbox) { this->bbox = bbox; }
-Box Node::getBBox() { return *this->bbox;  }
-
 void Node::addMesh(Mesh *mesh) { this->meshList->push_back(mesh); }
-void Node::setMeshList(list<Mesh*> *meshList) { this->meshList = meshList; }
-list<Mesh*> Node::getMeshList() { return *this->meshList; }
+
 
 void Node::printMeshes() {
 	Mesh *tempMesh = nullptr;
@@ -772,7 +769,7 @@ void BVH::initiateBVH() {
 //   min pos and max pos out of all the meshes in the list of the given node
 //===============================================================================
 void BVH::setBBox(Node *curr) {
-	list<Mesh*> tempMeshList = curr->getMeshList();
+	list<Mesh*> tempMeshList = *curr->meshList;
 	float maxX = tempMeshList.front()->centroid().x, maxY = tempMeshList.front()->centroid().y, maxZ = tempMeshList.front()->centroid().z
 		, minX = tempMeshList.front()->centroid().x, minY = tempMeshList.front()->centroid().y, minZ = tempMeshList.front()->centroid().z;
 	Mesh *tempMesh;
@@ -811,7 +808,7 @@ void BVH::setBBox(Node *curr) {
 	glm::vec3 b1 = glm::vec3(maxXMesh->getMaxX(), maxYMesh->getMaxY(), maxZMesh->getMaxZ());
 	cout << "b0: " << b0.x << ", " << b0.y << ", " << b0.z << endl;
 	cout << "b1: " << b1.x << ", " << b1.y << ", " << b1.z << endl;
-	curr->setBBox(new Box(b0, b1, glm::vec3(0)));
+	curr->bbox = new Box(b0, b1, glm::vec3(0));
 }
 
 
@@ -823,11 +820,11 @@ void BVH::setBBox(Node *curr) {
 //    right lists.
 //===============================================================================
 void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
-	list<Mesh*> tempMeshList = curr->getMeshList();
+	list<Mesh*> tempMeshList = *curr->meshList;
 	list<Mesh*> *listLeft = new list<Mesh*>();
 	list<Mesh*> *listRight = new list<Mesh*>();
 	list<float> *distanceList = new list<float>();
-	Box bbox = curr->getBBox();
+	Box bbox = *curr->bbox;
 	glm::vec3 b0 = bbox.bounds[0];
 	glm::vec3 b1 = bbox.bounds[1];
 	/*cout << "b0: " << b0.x << ", " << b0.y << ", " << b0.z << endl;
@@ -850,10 +847,7 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 			b1NearMesh = tempMesh;
 		}
 	}
-	/*cout << "b0NearMesh: " << b0NearMesh->centroid().x << ", " << b0NearMesh->centroid().y << ", " << b0NearMesh->centroid().z << endl;
-	cout << "b1NearMesh: " << b1NearMesh->centroid().x << ", " << b1NearMesh->centroid().y << ", " << b1NearMesh->centroid().z << endl;*/
 
-	// if tempMesh is closer to b0, then we put it into the leftList, otherwise rightList.
 	tempMesh = nullptr;
 	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
 		tempMesh = &**it;
@@ -865,19 +859,10 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 	list<Mesh*> leftIt = *listLeft;
 	list<Mesh*> righIt = *listRight;
 	tempMesh = nullptr;
-	//for (list<Mesh*>::iterator it = leftIt.begin(); it != leftIt.end(); ++it) {
-	//	tempMesh = &**it;
-	//	cout << "LEFT NUM: " << tempMesh->num << endl;
-	//}
 	tempMesh = nullptr;
-	//for (list<Mesh*>::iterator it = righIt.begin(); it != righIt.end(); ++it) {
-	//	tempMesh = &**it;
-	//	cout << "RIGHT NUM: " << tempMesh->num << endl;
-	//}
-	//cout << "Left size" << listLeft->size() << endl;
-	//cout << "Right size " << listRight->size() << endl;
-	tempLeft->setMeshList(listLeft);
-	tempRight->setMeshList(listRight);
+
+	tempLeft->meshList = listLeft;
+	tempRight->meshList = listRight;
 }
 
 
@@ -887,16 +872,16 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 //   completed, this->root will have the root node of the entire tree.
 //===============================================================================
 bool BVH::buildBVH(Node *curr) {
-	if ( curr->getMeshList().size() >= 1 )
+	if ( curr->meshList->size() >= 1 )
 		setBBox(curr); // This sets the BBOX for the current node
-	if (curr->getMeshList().size() <= 1) // BASE CASE
+	if (curr->meshList->size() <= 1) // BASE CASE
 		return true;
 	Node *leftNode = new Node();
 	Node *rightNode = new Node();
-	curr->setLeft(leftNode);
-	curr->setRight(rightNode);
+	curr->left =  leftNode;
+	curr->right = rightNode;
 	listSplit(curr, leftNode, rightNode);  // so leftNode and rightNode now contains the lists
-	if (curr->getLeft().getMeshList().size() == 0 || curr->getRight().getMeshList().size() == 0) {
+	if ( curr->left->meshList->size() == 0 || curr->right->meshList->size() == 0) {
 		return true;
 	}
 	this->buildBVH(leftNode);
@@ -911,20 +896,19 @@ bool BVH::buildBVH(Node *curr) {
 //   If this function returns true, we must perform traceRay. Otherwise, we don't
 //   call traceRay to improve the performance.
 //===============================================================================
-bool BVH::Intersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit) {
+bool BVH::findIntersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit) {
 	if (curr == NULL )
 		return false;
 	float t = 0.0f;
-	//cout << "SIZE: " << curr->getMeshList().size() << endl;
-	bool hit = curr->getBBox().Intersection(_rayOrigin, _rayDirection, &t);
+	bool hit = curr->bbox->Intersection(_rayOrigin, _rayDirection, &t);
 	if (hit) {
-		if (&curr->getLeft() == nullptr && &curr->getRight() == nullptr) {
+		if ( curr->left == nullptr && curr->right == nullptr) {
 			*isHit = true;
 			return true;
 		}
 		else {
-			Intersection(&curr->getLeft(), _rayOrigin, _rayDirection, isHit);
-			Intersection(&curr->getRight(), _rayOrigin, _rayDirection, isHit);
+			findIntersection(curr->left, _rayOrigin, _rayDirection, isHit);
+			findIntersection(curr->right, _rayOrigin, _rayDirection, isHit);
 		}
 	}
 	return false;
@@ -935,6 +919,6 @@ void BVH::traverseTest(Node *curr) {
 		return;
 	}
 	curr->printMeshes();
-	traverseTest(&curr->getLeft());
-	traverseTest(&curr->getRight());
+	traverseTest(curr->left);
+	traverseTest(curr->right);
 }

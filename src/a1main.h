@@ -8,6 +8,7 @@ using namespace std;
 struct Options {
 	float fov = 90, bias = 1e-5f;
 	int maxDepth = 5;
+	glm::vec3 backgroundColour = glm::vec3(0.78, 0.67, 0.65);
 };
 
 
@@ -176,8 +177,6 @@ bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float
 glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth);
 glm::vec3 setToOrigRGB(glm::vec3 _colour);
 float clamp(const float _lo, const float _hi, const float _v);
-glm::vec3 findMaxCoordinate(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c);
-glm::vec3 findMinCoordinate(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c);
 
 // Node to be used in BVH. I am using binary tree structure for my BVH
 
@@ -188,7 +187,6 @@ class Node {
 
 public:
 	Node(void);
-
 	// Mutators
 	void setLeft(Node *next);
 	void setRight(Node *right);
@@ -199,6 +197,8 @@ public:
 	void addMesh(Mesh* mesh);
 	void setMeshList(list<Mesh*> *meshList);
 	list<Mesh*> getMeshList();
+
+	void printMeshes();
 };
 
 
@@ -212,6 +212,8 @@ public:
 	void initiateBVH();
 	void setBBox(Node *curr);
 	void listSplit(Node *curr, Node *tempLeft, Node *tempRight);
+	void traverseTest(Node *curr);
 	bool buildBVH(Node *curr);
+	bool Intersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit);
 };
 

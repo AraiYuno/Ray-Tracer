@@ -10,6 +10,7 @@ using namespace std;
 struct Options;
 
 //GLOBAL VARIABLE
+int countTraceRay = 0;
 BVH* bvh;
 Options options;
 int maxDepth = 5;
@@ -19,6 +20,8 @@ bool hardShadow = true;
 
 void trace(char *input_file, void *window, int width, int height) {
 	renderSI(window, width, height);             // Rendering Sphere Intersection
+	cout << "END" << endl;
+	cout << "Total Number of TraceRay calling: " << countTraceRay << endl;
 }
 
 void pick(void *window, int x, int y) {
@@ -43,7 +46,8 @@ void renderSI(void * window, int width, int height )
 	listlist->size();
 	createMeshes(meshArr);
 	createLights(lights);
-	bvh = new BVH();
+	bvh = new BVH(); // Here we have built our acceleration structure.
+	bvh->traverseTest(bvh->root);
 	glm::vec3 **image = new glm::vec3*[width];
 	for (int i = 0; i < width; i++) 
 		image[i] = new glm::vec3[height];
@@ -57,12 +61,16 @@ void renderSI(void * window, int width, int height )
 			glm::vec3 PcamSpace = glm::vec3(-pixRemapX, pixRemapY, 1);
 			glm::vec3 rayOrigin = glm::vec3(0, 0, 0);
 			glm::vec3 rayDirection = glm::normalize(rayOrigin - PcamSpace);
-			glm::vec3 pixColour = castRay(rayOrigin, rayDirection, 0);
+			glm::vec3 pixColour = options.backgroundColour;
+			//bool isHit = false;
+			//bvh->Intersection(bvh->root, rayOrigin, rayDirection, &isHit);
+			//if (isHit) {
+			pixColour = castRay(rayOrigin, rayDirection, 0);
+			//}
 			pixColour = setToOrigRGB(pixColour);
 			set(window, x, y, pixColour.x, pixColour.y, pixColour.z);
 		}
 	}
-	cout << "END" << endl;
 }
 
 glm::vec3 setToOrigRGB(glm::vec3 _colour) {
@@ -127,10 +135,10 @@ float mix(const float &a, const float &b, const float &mix)
 
 glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth) {
 	if (depth > maxDepth) // if it's higher than the maxDepth, we just return a white colour
-		return glm::vec3(0.78, 0.67, 0.65);
+		return options.backgroundColour;
 	glm::vec3 phongShade = glm::vec3(0);
 	glm::vec3 ambientShade = glm::vec3(0);
-	glm::vec3 hitColour = glm::vec3(0.78, 0.67, 0.65);
+	glm::vec3 hitColour = options.backgroundColour;
 	float tNear = 0.0f;
 	int hitMeshIndex = 0;
 	Mesh *hitMesh = nullptr;
@@ -222,9 +230,10 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 //   meshHitIndex value.
 //=======================================================================================
 bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *_t, int &_meshHitIndex, Mesh **_hitMesh) {
+	countTraceRay++;
 	*_hitMesh = nullptr;
 	float minT = INFINITY;
-	float t0 = 0.0;
+	float t0 = 0.0f;
 	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++) {
 		bool hit = meshArr[i]->Intersection(_rayOrigin, _rayDirection, &t0);
 		if (hit && t0 < minT) {
@@ -724,6 +733,18 @@ void Node::addMesh(Mesh *mesh) { this->meshList->push_back(mesh); }
 void Node::setMeshList(list<Mesh*> *meshList) { this->meshList = meshList; }
 list<Mesh*> Node::getMeshList() { return *this->meshList; }
 
+void Node::printMeshes() {
+	Mesh *tempMesh = nullptr;
+	list<Mesh*> tempList = *this->meshList;
+	cout << " " << endl;
+	cout << "======================================================" << endl;
+	for (list<Mesh*>::iterator it = tempList.begin(); it != tempList.end(); ++it) {
+		tempMesh = &**it;
+		cout << tempMesh->num << endl;
+	}
+	cout << "======================================================" << endl;
+}
+
 
 //===============================================================================
 // BVH constructor
@@ -752,7 +773,6 @@ void BVH::initiateBVH() {
 //===============================================================================
 void BVH::setBBox(Node *curr) {
 	list<Mesh*> tempMeshList = curr->getMeshList();
-	float zz = tempMeshList.front()->centroid().x;
 	float maxX = tempMeshList.front()->centroid().x, maxY = tempMeshList.front()->centroid().y, maxZ = tempMeshList.front()->centroid().z
 		, minX = tempMeshList.front()->centroid().x, minY = tempMeshList.front()->centroid().y, minZ = tempMeshList.front()->centroid().z;
 	Mesh *tempMesh;
@@ -837,31 +857,25 @@ void BVH::listSplit(Node *curr, Node *tempLeft, Node *tempRight) {
 	tempMesh = nullptr;
 	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
 		tempMesh = &**it;
-		if (abs(glm::distance(b0NearMesh->centroid(), tempMesh->centroid())) < glm::abs(glm::distance(b1NearMesh->centroid(), tempMesh->centroid()))) {
-			//if (tempMesh != b1NearMesh && tempMesh != b0NearMesh) {
+		if (abs(glm::distance(b0NearMesh->centroid(), tempMesh->centroid())) < glm::abs(glm::distance(b1NearMesh->centroid(), tempMesh->centroid())))
 				listLeft->push_back(tempMesh);
-			//}
-		}
-		else {
-			//if (tempMesh != b1NearMesh && tempMesh != b0NearMesh) {
-				listRight->push_back(tempMesh);
-			//}
-		}
+		else 
+			listRight->push_back(tempMesh);
 	}
 	list<Mesh*> leftIt = *listLeft;
 	list<Mesh*> righIt = *listRight;
 	tempMesh = nullptr;
-	for (list<Mesh*>::iterator it = leftIt.begin(); it != leftIt.end(); ++it) {
-		tempMesh = &**it;
-		cout << "LEFT NUM: " << tempMesh->num << endl;
-	}
+	//for (list<Mesh*>::iterator it = leftIt.begin(); it != leftIt.end(); ++it) {
+	//	tempMesh = &**it;
+	//	cout << "LEFT NUM: " << tempMesh->num << endl;
+	//}
 	tempMesh = nullptr;
-	for (list<Mesh*>::iterator it = righIt.begin(); it != righIt.end(); ++it) {
-		tempMesh = &**it;
-		cout << "RIGHT NUM: " << tempMesh->num << endl;
-	}
-	cout << "Left size" << listLeft->size() << endl;
-	cout << "Right size " << listRight->size() << endl;
+	//for (list<Mesh*>::iterator it = righIt.begin(); it != righIt.end(); ++it) {
+	//	tempMesh = &**it;
+	//	cout << "RIGHT NUM: " << tempMesh->num << endl;
+	//}
+	//cout << "Left size" << listLeft->size() << endl;
+	//cout << "Right size " << listRight->size() << endl;
 	tempLeft->setMeshList(listLeft);
 	tempRight->setMeshList(listRight);
 }
@@ -887,4 +901,40 @@ bool BVH::buildBVH(Node *curr) {
 	}
 	this->buildBVH(leftNode);
 	return this->buildBVH(rightNode);
+}
+
+
+//===============================================================================
+// Intersection
+//   returns true if any one of leaves are hit by the ray. False otherwise.
+//   
+//   If this function returns true, we must perform traceRay. Otherwise, we don't
+//   call traceRay to improve the performance.
+//===============================================================================
+bool BVH::Intersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit) {
+	if (curr == NULL )
+		return false;
+	float t = 0.0f;
+	//cout << "SIZE: " << curr->getMeshList().size() << endl;
+	bool hit = curr->getBBox().Intersection(_rayOrigin, _rayDirection, &t);
+	if (hit) {
+		if (&curr->getLeft() == nullptr && &curr->getRight() == nullptr) {
+			*isHit = true;
+			return true;
+		}
+		else {
+			Intersection(&curr->getLeft(), _rayOrigin, _rayDirection, isHit);
+			Intersection(&curr->getRight(), _rayOrigin, _rayDirection, isHit);
+		}
+	}
+	return false;
+}
+
+void BVH::traverseTest(Node *curr) {
+	if (curr == NULL) {
+		return;
+	}
+	curr->printMeshes();
+	traverseTest(&curr->getLeft());
+	traverseTest(&curr->getRight());
 }

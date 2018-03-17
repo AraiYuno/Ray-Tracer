@@ -1,0 +1,38 @@
+SBT-raytracer 1.0
+
+camera {
+  position=( 0,0,0 );
+  viewdir=( 0,0,-1 );
+  updir=( 0,1,0 );
+  fov=45;
+}
+
+ambient_light {
+  color=( 0,0,0 );
+}
+
+directional_light {
+  direction=( 0,0,-3 );
+  color=( 1,1,1 );
+}
+
+translate(-0.2,-0.5,-3.5,
+  scale(0.8,0.8,4,
+    box {
+      material={
+        diffuse=( 0.8,0.8,0.3 );
+        transmissive=( 0.5,0.5,0.5 );
+        index=1.3;
+      }
+}));
+
+translate(0,0,-2.5,
+  scale(0.707107,
+    sphere {
+      material={
+        diffuse=( 0.5,0.5,0.9 );
+        transmissive=( 0.9,0.9,0.9 );
+        index=1.8;
+      }
+}));
+

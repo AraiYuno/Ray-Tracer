@@ -1,0 +1,95 @@
+SBT-raytracer 1.0
+
+camera {
+  position=( 0,0,0 );
+  viewdir=( 0,0,-1 );
+  updir=( 0,1,0 );
+  fov=45;
+}
+
+ambient_light {
+  color=( 0,0,0 );
+}
+
+point_light {
+  position=( 1.44564,-0.485372,0.808535 );
+  colour=( 1,1,1 );
+  constant_attenuation_coeff=0.25;
+  linear_attenuation_coeff=0.00337241;
+  quadratic_attenuation_coeff=4.5492e-05;
+}
+
+translate(-1.50821,-1.54485,-5.0305,
+  scale(0.288315,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.2,0.6,0.75 );
+        shininess=25.6;
+      }
+}));
+
+translate(1.84349,-0.661488,-5.05588,
+  scale(0.310878,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.8,0.2,0.5 );
+        shininess=25.6;
+      }
+}));
+
+translate(-0.800517,1.81094,-5.62886,
+  scale(0.312566,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.5,0.75,0.2 );
+        shininess=25.6;
+      }
+}));
+
+translate(1.15027,-0.522035,-5.43002,
+  scale(0.670496,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.34,0.07,0.56 );
+        specular=( 0.4,0.4,0.4 );
+        shininess=122.074;
+      }
+}));
+
+translate(-0.560763,1.08614,-5.70474,
+  scale(0.636615,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.56,0.24,0.12 );
+        specular=( 0.4,0.4,0.4 );
+        shininess=120.889;
+      }
+}));
+
+translate(-1.1363,-1.17167,-5.38221,
+  scale(0.597582,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.04,0.56,0.28 );
+        specular=( 0.4,0.4,0.4 );
+        shininess=124.444;
+      }
+}));
+
+translate(-0.24724,-0.229819,-6.12079,
+  scale(1.18902,
+    sphere {
+      material={
+        ambient=( 0.2,0.2,0.2 );
+        diffuse=( 0.6,0.6,0.6 );
+        specular=( 0.5,0.5,0.5 );
+        shininess=118.519;
+      }
+}));
+

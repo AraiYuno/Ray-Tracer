@@ -2,15 +2,19 @@
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(68): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(69): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(84): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(191): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(350): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(351): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(353): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(362): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(363): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(365): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(494): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(506): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(495): warning C4101: 'u1': unreferenced local variable
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(495): warning C4101: 'v1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(195): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(214): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(364): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(365): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(367): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(376): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(377): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(379): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(469): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(470): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(515): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(527): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(516): warning C4101: 'u1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(516): warning C4101: 'v1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(957): warning C4305: '=': truncation from 'double' to 'float'
   COMP4490.vcxproj -> C:\Users\Owner\Desktop\School\COMP 4490\A1\comp4490a1\comp4490\build\comp4490.exe

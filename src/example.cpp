@@ -15,7 +15,7 @@ int countTraceRay = 0;
 BVH* bvh;
 Options options;
 int maxDepth = 5;
-Mesh* meshArr[11];
+Mesh* meshArr[12];
 Light* lights[2];
 bool hardShadow = true;
 
@@ -121,7 +121,7 @@ void createMeshes(Mesh *meshes[]) {
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // WHITE SPHERE
 	meshes[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
 		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0));  // YELLOW SHPERE
-	meshes[2]->surfaceMaterial = REFLECTION;
+	meshes[2]->surfaceMaterial = REFLECTION_AND_REFRACTION;
 	meshes[2]->ior = 1.3f;
 																				  // TRIANGULAR MESH
 	meshes[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // EMERALD TRIANGLE // u -> CAP
@@ -132,6 +132,10 @@ void createMeshes(Mesh *meshes[]) {
 																																   // BOXES
 	meshes[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(0.20f, 0.20f, 1.0f));
 	meshes[10] = new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(1.0f, 0.078f, 0.58f));
+
+	meshes[11] = new Sphere(glm::vec3(8, 3, -15), glm::vec3(0.1f, 0.1f, 1.0f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // blue sphere
+	meshes[11]->surfaceMaterial = CHECKERBOARD;
 
 	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++) {
 		meshes[i]->num = i;
@@ -201,20 +205,21 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 						phongShade += (specular + diffuse)*attenuation;
 					}
 				}
-				hitColour = ambientShade + phongShade;
+				glm::vec3 Nhit;
+				glm::vec2 tex;
+				if (dynamic_cast<Sphere*>(hitMesh) && hitMesh->surfaceMaterial == CHECKERBOARD) {
+					Sphere *sphere = dynamic_cast<Sphere*>(hitMesh);
+					sphere->getSurfaceData(p0, &Nhit, &tex);
+					float scale = 4;
+					float pattern = (fmodf(tex.x * scale, 1) > 0.5) ^ (fmodf(tex.y * scale, 1) > 0.5);
+					hitColour = glm::max(glm::vec3(0.0f), (glm::dot(Nhit, -_rayDirection) * glm::mix((ambientShade + phongShade), (ambientShade + phongShade) * 0.5f, pattern)));
+				}
+				else
+					hitColour = ambientShade + phongShade;
 				break;
 			}
 			case REFLECTION:
 			{
-				/*float kr;
-				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
-				glm::vec3 reflectionDirection = reflect(_rayDirection, N);
-				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
-					p0 + N * options.bias :
-					p0 - N * options.bias;
-				glm::vec3 reflectionColour = castRay(reflectionRayOrig, reflectionDirection, depth + 1) * kr;
-				hitColour = phongShade + reflectionColour;
-				break;*/
 				float kr;
 				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
 				glm::vec3 reflectionDirection = reflect(_rayDirection, N);
@@ -232,7 +237,7 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 					p0 + N * options.bias;
 				float kr;
 				fresnel(_rayDirection, N, &hitMesh->ior, &kr);
-				hitColour = castRay(refractionRayOrig, refractionDirection, depth + 1); //  +refractionColor * (1 - (13.0f*kr));
+				hitColour = castRay(p0*(N), refractionDirection, depth + 1);
 				break;
 			}
 		}
@@ -297,6 +302,15 @@ glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N) {
 
 glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior)
 {
+	/*float cosi = -glm::dot(_N, _I);
+	float etat = *ior;
+	float sinT2 = etat * etat * (1.0f - cosi * cosi);
+	if (sinT2 > 1.0f) {
+		exit(EXIT_FAILURE);
+	}
+	float cosT = sqrt(1.0f - sinT2);
+	return _I * etat + _N * (_N * cosi - cosT);*/
+
 	float cosi = clamp(-1, 1, glm::dot(_I, _N));
 	float etai = 1, etat = *ior;
 	glm::vec3 n = _N;
@@ -447,6 +461,13 @@ glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse,
 	*_specular = glm::vec3(0.8, 0.8, 0.8);
 	N = glm::normalize(_p0 - pos);
 	return N;
+}
+
+void Sphere::getSurfaceData(glm::vec3 p0, glm::vec3 *_N, glm::vec2 *tex) {
+	*_N = p0 - this->pos;
+	*_N = glm::normalize(*_N);
+	tex->x = (1 + atan2(_N->z, _N->x) / (glm::atan(1) * 4)) * 0.5;
+	tex->y = acosf(_N->y) / (glm::atan(1));
 }
 
 
@@ -924,3 +945,44 @@ void BVH::traverseTest(Node *curr) {
 	traverseTest(curr->left);
 	traverseTest(curr->right);
 }
+
+// Offset points to move the origin which makes an ugly seam.
+#define POINT_OFFSET 3893343
+
+Checkerboard::Checkerboard(void) {
+	colour1 = glm::vec3(0.3, 0.2, 0.1);
+	colour2 = glm::vec3(0.7, 0.8, 0.9);
+	scale = 50;
+	shininess = 50;
+	reflectivity = 0.7;
+}
+
+Checkerboard::Checkerboard(glm::vec3 _colour1, glm::vec3 _colour2, float _scale, float _shininess, float _reflectivity) {
+	colour1 = _colour1;
+	colour2 = _colour2;
+	scale = _scale;
+	shininess = _shininess;
+	reflectivity = _reflectivity;
+}
+
+glm::vec3 Checkerboard::getColour(glm::vec3 point){
+	bool x = (int)((point.x + POINT_OFFSET) / scale) % 2 == 0;
+	bool y = (int)((point.y + POINT_OFFSET) / scale) % 2 == 0;
+	bool z = (int)((point.z + POINT_OFFSET) / scale) % 2 == 0;
+
+	if (x ^ y ^ z) {
+		return colour1;
+	}
+	else {
+		return colour2;
+	}
+}
+
+float Checkerboard::getShininess() {
+	return shininess;
+}
+
+float Checkerboard::getReflectivity() {
+	return reflectivity;
+}
+

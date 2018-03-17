@@ -1,0 +1,56 @@
+SBT-raytracer 1.0
+
+camera {
+  position=( 0,0,0 );
+  viewdir=( 0,0,-1 );
+  updir=( 0,1,0 );
+  fov=45;
+}
+
+ambient_light {
+  color=( 0,0,0 );
+}
+
+directional_light {
+  direction=( 0.169031,0.565714,-8.07967 );
+  color=( 1,1,1 );
+}
+
+point_light {
+  position=( 0.304256,4.16571,-5.71324 );
+  colour=( 1,1,0.7 );
+  constant_attenuation_coeff=0.25;
+  linear_attenuation_coeff=0.00337241;
+  quadratic_attenuation_coeff=4.5492e-05;
+}
+
+point_light {
+  position=( -4.90189,0.108571,-5.37518 );
+  colour=( 0,1,0 );
+  constant_attenuation_coeff=0.25;
+  linear_attenuation_coeff=0.00337241;
+  quadratic_attenuation_coeff=4.5492e-05;
+}
+
+translate(0.507093,0.337143,-6.72743,
+  scale(0.791465,
+    sphere {
+      material={
+        diffuse=( 0.4,0.4,0 );
+        specular=( 0.8,0.8,0 );
+        reflective=( 0.8,0.8,0 );
+        shininess=102.4;
+      }
+}));
+
+translate(-1.85934,0.188571,-5.84847,
+  scale(0.593599,
+    sphere {
+      material={
+        diffuse=( 0,0.4,0.4 );
+        specular=( 0,0.8,0.8 );
+        reflective=( 0,0.8,0.8 );
+        shininess=115.2;
+      }
+}));
+

@@ -22,9 +22,8 @@ void set(void *window, int x, int y, unsigned char red, unsigned char green, uns
 bool get(void *window, int x, int y, unsigned char &red, unsigned char &green, unsigned char &blue);
 void redraw(void *window);
 
-// Different surface material types
-enum SurfaceMaterial { DIFFUSE_AND_GLOSSY, REFLECTION_AND_REFRACTION, REFLECTION };
-
+// Different surfac material typestex
+enum SurfaceMaterial { DIFFUSE_AND_GLOSSY, REFLECTION_AND_REFRACTION, REFLECTION, CHECKERBOARD };
 
 
 //======================================================================
@@ -96,6 +95,7 @@ public:
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 centroid();
 	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+	void getSurfaceData(glm::vec3 p0, glm::vec3 *_N, glm::vec2 *tex);
 
 	float getMinX();
 	float getMinY();
@@ -154,6 +154,8 @@ public:
 
 
 
+
+
 //======================================================================
 // Shadow Attenuation
 //    Code for Shadow Attenuation
@@ -196,6 +198,25 @@ public:
 };
 
 
+class Checkerboard {
+private:
+	glm::vec3 colour1;
+	glm::vec3 colour2;
+	float scale;
+	float shininess;
+	float reflectivity;
+
+public:
+	Checkerboard(void);
+	Checkerboard(glm::vec3 _colour1, glm::vec3 _colour2, float _scale, float _shininess, float _reflectivity);
+
+	virtual glm::vec3 getColour(glm::vec3 point);
+	virtual float getShininess();
+	virtual float getReflectivity();
+};
+
+
+
 // to render the scene.
 bool bvhSwitch();
 void renderSI(void *window, int width, int height);
@@ -208,3 +229,4 @@ bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float
 glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth);
 glm::vec3 setToOrigRGB(glm::vec3 _colour);
 float clamp(const float _lo, const float _hi, const float _v);
+

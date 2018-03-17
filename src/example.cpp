@@ -1,6 +1,7 @@
-#include <stdio.h>
+ï»¿#include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <ctime>
 #include <glm/glm.hpp>
 #include "a1main.h"
 
@@ -20,8 +21,8 @@ bool hardShadow = true;
 
 void trace(char *input_file, void *window, int width, int height) {
 	renderSI(window, width, height);             // Rendering Sphere Intersection
-	cout << "END" << endl;
 	cout << "Total Number of TraceRay calling: " << countTraceRay << endl;
+	cout << "End of the Program" << endl;
 }
 
 void pick(void *window, int x, int y) {
@@ -33,7 +34,15 @@ void pick(void *window, int x, int y) {
 	}
 }
 
-
+bool bvhSwitch() {
+	int input = 0;
+	cout << "Please type 1 if you want to turn on BVH. Type 0 otherwise." << endl;
+	cin >> input;
+	if (input == 1) {
+		bvh = new BVH(); // Here we have built our acceleration structure.
+	}
+	return input;
+}
 
 //=================================================================================
 //renderSI
@@ -46,8 +55,8 @@ void renderSI(void * window, int width, int height )
 	listlist->size();
 	createMeshes(meshArr);
 	createLights(lights);
-	bvh = new BVH(); // Here we have built our acceleration structure.
-	//bvh->traverseTest(bvh->root);
+	bool bvhButton = bvhSwitch();
+	clock_t begin = clock();
 	glm::vec3 **image = new glm::vec3*[width];
 	for (int i = 0; i < width; i++) 
 		image[i] = new glm::vec3[height];
@@ -62,15 +71,22 @@ void renderSI(void * window, int width, int height )
 			glm::vec3 rayOrigin = glm::vec3(0, 0, 0);
 			glm::vec3 rayDirection = glm::normalize(rayOrigin - PcamSpace);
 			glm::vec3 pixColour = options.backgroundColour;
-			bool isHit = false;
-			bvh->findIntersection(bvh->root, rayOrigin, rayDirection, &isHit);
-			if (isHit) {
-			pixColour = castRay(rayOrigin, rayDirection, 0);
+			if (bvhButton) {
+				bool isHit = false;
+				bvh->findIntersection(bvh->root, rayOrigin, rayDirection, &isHit);
+				if (isHit) {
+					pixColour = castRay(rayOrigin, rayDirection, 0);
+				}
 			}
+			else
+				pixColour = castRay(rayOrigin, rayDirection, 0);
 			pixColour = setToOrigRGB(pixColour);
 			set(window, x, y, pixColour.x, pixColour.y, pixColour.z);
 		}
 	}
+	clock_t end = clock();
+	double elapsed_time = double(end - begin);
+	cout << "Time Elapsed: " << elapsed_time << " ms" << endl;
 }
 
 glm::vec3 setToOrigRGB(glm::vec3 _colour) {
@@ -472,7 +488,7 @@ Triangle::Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour )
 //=======================================================================================
 // Intersection
 //   checks intersection of a triangle and returns true if it does.
-//   I have used Möller–Trumbore intersection algorithm.
+//   I have used MÃ¶llerâ€“Trumbore intersection algorithm.
 //=======================================================================================
 bool Triangle::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t) {
 	const float EPSILON = 0.0000001;
@@ -777,37 +793,23 @@ void BVH::setBBox(Node *curr) {
 		 *minXMesh = tempMeshList.front(), *minYMesh = tempMeshList.front(), *minZMesh = tempMeshList.front();
 	for (list<Mesh*>::iterator it = tempMeshList.begin(); it != tempMeshList.end(); ++it) {
 		tempMesh = &**it;
-		if (tempMesh->centroid().x > maxX) {
-			maxX = tempMesh->centroid().x;
-			maxXMesh = tempMesh;
-		}
-		if (tempMesh->centroid().y > maxY) {
-			maxY = tempMesh->centroid().y;
-			maxYMesh = tempMesh;
-		}
-		if (tempMesh->centroid().z > maxZ) {
-			maxZ = tempMesh->centroid().z;
-			maxZMesh = tempMesh;
-		}
+		if (tempMesh->getMaxX() > maxX)
+			maxX = tempMesh->getMaxX();
+		if (tempMesh->getMaxY() > maxY)
+			maxY = tempMesh->getMaxY();
+		if (tempMesh->getMaxZ() > maxZ)
+			maxZ = tempMesh->getMaxZ();
 
-		if (tempMesh->centroid().x < minX) {
-			minX = tempMesh->centroid().x;
-			minXMesh = tempMesh;
-		}
-		if (tempMesh->centroid().y < minY) {
-			minY = tempMesh->centroid().y;
-			minYMesh = tempMesh;
-		}
-		if (tempMesh->centroid().z < minZ) {
-			minZ = tempMesh->centroid().z;
-			minZMesh = tempMesh;
-		}
+		if (tempMesh->getMinX() < minX)
+			minX = tempMesh->getMinX();
+		if (tempMesh->getMinY() < minY)
+			minY = tempMesh->getMinY();
+		if (tempMesh->getMinZ() < minZ)
+			minZ = tempMesh->getMinZ();
 	}
 
-	glm::vec3 b0 = glm::vec3(minXMesh->getMinX(), minYMesh->getMinY(), minZMesh->getMinZ());
-	glm::vec3 b1 = glm::vec3(maxXMesh->getMaxX(), maxYMesh->getMaxY(), maxZMesh->getMaxZ());
-	cout << "b0: " << b0.x << ", " << b0.y << ", " << b0.z << endl;
-	cout << "b1: " << b1.x << ", " << b1.y << ", " << b1.z << endl;
+	glm::vec3 b0 = glm::vec3(minX, minY, minZ);
+	glm::vec3 b1 = glm::vec3(maxX, maxY, maxZ);
 	curr->bbox = new Box(b0, b1, glm::vec3(0));
 }
 

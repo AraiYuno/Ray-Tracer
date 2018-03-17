@@ -166,21 +166,7 @@ public:
 	~ShadowAtt();
 };
 
-
-// to render the scene.
-void renderSI(void *window, int width, int height);
-void createMeshes(Mesh *meshes[]);
-void createLights(Light *Lights[]);
-void fresnel(const glm::vec3 _I, const glm::vec3 _N, const float *ior, float *kr);
-glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior);
-glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
-bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *t, int &meshHitIndex, Mesh **hitMesh);
-glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth);
-glm::vec3 setToOrigRGB(glm::vec3 _colour);
-float clamp(const float _lo, const float _hi, const float _v);
-
 // Node to be used in BVH. I am using binary tree structure for my BVH
-
 class Node {
 public:
 	Node(void);
@@ -197,7 +183,7 @@ public:
 class BVH {
 
 
-public: 
+public:
 	Node * root;
 	// This function takes in all the objects and creates a BVH tree.
 	BVH(void);
@@ -209,3 +195,16 @@ public:
 	bool findIntersection(Node *curr, glm::vec3 _rayOrigin, glm::vec3 _rayDirection, bool *isHit);
 };
 
+
+// to render the scene.
+bool bvhSwitch();
+void renderSI(void *window, int width, int height);
+void createMeshes(Mesh *meshes[]);
+void createLights(Light *Lights[]);
+void fresnel(const glm::vec3 _I, const glm::vec3 _N, const float *ior, float *kr);
+glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior);
+glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
+bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float *t, int &meshHitIndex, Mesh **hitMesh);
+glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, int depth);
+glm::vec3 setToOrigRGB(glm::vec3 _colour);
+float clamp(const float _lo, const float _hi, const float _v);

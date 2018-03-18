@@ -151,13 +151,18 @@ void createMeshes(list<Mesh*> *meshList, int selector) {
 		meshList->push_back(sphere1);
 
 		Sphere *sphere2 = new Sphere(glm::vec3(-0.800517, 1.81094, -5.62886), glm::vec3(0.5, 0.75, 0.2), 0.312566);
-		sphere2->setSurfaceProperties(25.6f, 1.0f, sphere2->colour, glm::vec3(0.8f), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.0f, 0.9f, 0.0f));
+		sphere2->setSurfaceProperties(25.6f, 1.3f, sphere2->colour, glm::vec3(0.8f), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.0f, 0.9f, 0.0f));
 		meshList->push_back(sphere2);
 
 		Sphere *sphere3 = new Sphere(glm::vec3(1.15027, -0.522035, -5.43002), glm::vec3(0.34, 0.07, 0.56), 0.670496);
 		sphere3->setSurfaceProperties(122.074f, 1.3f, sphere3->colour, glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.4, 0.4, 0.4));
 		sphere3->surfaceMaterial = REFLECTION;
 		meshList->push_back(sphere3);
+
+		Sphere *sphere4 = new Sphere(glm::vec3(-0.560763, 1.08614, -5.70474), glm::vec3(0.56, 0.24, 0.12), 0.636615);
+		sphere4->setSurfaceProperties(120.889f, 1.3f, sphere4->colour, glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.4, 0.4, 0.4));
+		sphere4->surfaceMaterial = REFLECTION;
+		meshList->push_back(sphere4);
 	}
 	
 

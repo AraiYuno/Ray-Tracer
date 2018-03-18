@@ -13,9 +13,10 @@ struct Options;
 //GLOBAL VARIABLE
 int countTraceRay = 0;
 BVH* bvh;
-Options options;
+Options options;	
 int maxDepth = 5;
-Mesh* meshArr[12];
+list<Mesh*> *globalMeshList;
+list<Light*> *globalLightList;
 Light* lights[2];
 bool hardShadow = true;
 
@@ -35,13 +36,23 @@ void pick(void *window, int x, int y) {
 }
 
 bool bvhSwitch() {
-	int input = 0;
+	int bvhButton = 0;
 	cout << "Please type 1 if you want to turn on BVH. Type 0 otherwise." << endl;
-	cin >> input;
-	if (input == 1) {
+	cin >> bvhButton;
+	if (bvhButton == 1) {
 		bvh = new BVH(); // Here we have built our acceleration structure.
 	}
-	return input;
+	return bvhButton;
+}
+
+int sceneSelector() {
+	int selector = 0;
+	cout << "Please specify which scene you would like to render. Press a number. ex) 1 for boxes.ray." << endl;
+	cout << "1. boxes.ray" << endl;
+	cout << "2. sphere.ray" << endl;
+
+	cin >> selector;
+	return selector;
 }
 
 //=================================================================================
@@ -51,10 +62,12 @@ bool bvhSwitch() {
 //=================================================================================
 void renderSI(void * window, int width, int height )
 {
-	list<Mesh*> *listlist = new list<Mesh*>();
-	listlist->size();
-	createMeshes(meshArr);
-	createLights(lights);
+	
+	globalMeshList = new list<Mesh*>();
+	globalLightList = new list<Light*>();
+	int selector = sceneSelector();
+	createMeshes(globalMeshList, selector);
+	createLights(globalLightList, selector);
 	bool bvhButton = bvhSwitch();
 	clock_t begin = clock();
 	glm::vec3 **image = new glm::vec3*[width];
@@ -65,8 +78,8 @@ void renderSI(void * window, int width, int height )
 		for (int x = 0; x < width; x++) {
 			float pixRemapX = (2 * ((x + 0.5f) / (float)width) - 1)*(float)(width/height) ;
 			float pixRemapY = 1 - 2 * ((y + 0.5f) / (float)height);
-			float pixCamX = pixRemapX * glm::tan(glm::radians(90.0) / 2);
-			float pixCamY = pixRemapY * glm::tan(glm::radians(90.0) / 2);
+			float pixCamX = pixRemapX * glm::tan(glm::radians(options.fov) / 2);
+			float pixCamY = pixRemapY * glm::tan(glm::radians(options.fov) / 2);
 			glm::vec3 PcamSpace = glm::vec3(-pixRemapX, pixRemapY, 1);
 			glm::vec3 rayOrigin = glm::vec3(0, 0, 0);
 			glm::vec3 rayDirection = glm::normalize(rayOrigin - PcamSpace);
@@ -109,42 +122,92 @@ glm::vec3 setToOrigRGB(glm::vec3 _colour) {
 }
 
 
-void createMeshes(Mesh *meshes[]) {
+void createMeshes(list<Mesh*> *meshList, int selector) {
 	// SPHERE
-	meshes[0] = new Sphere(glm::vec3(10, -1, -18), glm::vec3(1.0f, 0.0f, 0.0f), 1, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
-		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // RED SHPERE
-	meshes[1] = new Sphere(glm::vec3(3, 5, -15), glm::vec3(0.1f, 0.1f, 0.1f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
-		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // dark Floor
-	meshes[2] = new Sphere(glm::vec3(9, -3, -15), glm::vec3(1.0f, 1.0f, 0), 3.1f, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
-		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // YEE
-	meshes[3] = new Sphere(glm::vec3(5, 0, -15), glm::vec3(1.0f, 1.0f, 1.0f), 1.5, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
-		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // WHITE SPHERE
-	meshes[4] = new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
-		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0));  // YELLOW SHPERE
-	meshes[2]->surfaceMaterial = REFLECTION_AND_REFRACTION;
-	meshes[2]->ior = 1.3f;
-																				  // TRIANGULAR MESH
-	meshes[5] = new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // EMERALD TRIANGLE // u -> CAP
-	meshes[6] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // v -> ABP
-	meshes[7] = new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f)); // w -> BCP
-	meshes[8] = new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0.08f, 0.33f, 0.08f)); // ABC -> base
+	
+	//boxes.ray
+	if (selector == 1) {
+		cout << "HERE " << endl;
+		options.fov = 45.0f;
+		Box *box1 = new Box(glm::vec3(0.25f, 0.25f, -3.8), glm::vec3(0.75, 0.75, -2.7), glm::vec3(0, 0.9, 0));
+		box1->setSurfaceProperties(76.8f, 1.0f, glm::vec3(box1->colour), glm::vec3(0.0, 0.8, 0), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.0f, 0.9f, 0.0f));
+		meshList->push_back(box1);
 
-																																   // BOXES
-	meshes[9] = new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(0.20f, 0.20f, 1.0f));
-	meshes[10] = new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(1.0f, 0.078f, 0.58f));
+		Box *box2 = new Box(glm::vec3(0.50f, -1.25f, -4.0), glm::vec3(1.0f, -0.75f, -3.0f), glm::vec3(0.7, 0, 1));
+		box2->setSurfaceProperties(76.8f, 1.5f, glm::vec3(box2->colour), glm::vec3(0.9, 0.4, 0), glm::vec3(0.2f), glm::vec3(0.9, 0.4, 0), glm::vec3(0.0f));
+		box2->surfaceMaterial = REFLECTION_AND_REFRACTION;
+		meshList->push_back(box2);
 
-	meshes[11] = new Sphere(glm::vec3(8, 3, -15), glm::vec3(0.1f, 0.1f, 1.0f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
-		glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // blue sphere
-	meshes[11]->surfaceMaterial = CHECKERBOARD;
+		Box *box3 = new Box(glm::vec3(-1.0f, -1.05f, -4.5), glm::vec3(0.2f, 0.55f, -3.5f), glm::vec3(0, 0.7, 1));
+		box3->setSurfaceProperties(76.8f, 1.5f, glm::vec3(box3->colour), glm::vec3(0, 0.9, 0.4), glm::vec3(0.2f),glm::vec3(0.0f), glm::vec3(0, 0.9, 0.4));
+		box3->surfaceMaterial = REFLECTION;
+		meshList->push_back(box3);
+	}
+	// sphere.ray 
+	else if (selector == 2) {
+		options.fov = 45.0f;
+		Sphere *sphere1 = new Sphere(glm::vec3(1.85604, -0.443595, -5.13845), glm::vec3(0.8, 0.2, 0.5), 0.310878f);
+		sphere1->setSurfaceProperties(25.6f, 1.0f, sphere1->colour, glm::vec3(0.8f), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.0f, 0.9f, 0.0f));
+		meshList->push_back(sphere1);
 
-	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++) {
-		meshes[i]->num = i;
+		Sphere *sphere2 = new Sphere(glm::vec3(-0.800517, 1.81094, -5.62886), glm::vec3(0.5, 0.75, 0.2), 0.312566);
+		sphere2->setSurfaceProperties(25.6f, 1.0f, sphere2->colour, glm::vec3(0.8f), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.0f, 0.9f, 0.0f));
+		meshList->push_back(sphere2);
+
+		Sphere *sphere3 = new Sphere(glm::vec3(1.15027, -0.522035, -5.43002), glm::vec3(0.34, 0.07, 0.56), 0.670496);
+		sphere3->setSurfaceProperties(122.074f, 1.3f, sphere3->colour, glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2f), glm::vec3(0.f), glm::vec3(0.4, 0.4, 0.4));
+		sphere3->surfaceMaterial = REFLECTION;
+		meshList->push_back(sphere3);
+	}
+	
+
+	//meshList->push_back(new Sphere(glm::vec3(3, 5, -15), glm::vec3(0.1f, 0.1f, 0.1f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	//	glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0))); // dark Floor
+	//meshList->push_back(new Sphere(glm::vec3(9, -3, -15), glm::vec3(1.0f, 1.0f, 0), 3.1f, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	//	glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0))); // YEE
+	//meshList->push_back(new Sphere(glm::vec3(5, 0, -15), glm::vec3(1.0f, 1.0f, 1.0f), 1.5, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	//	glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0))); // WHITE SPHERE
+	//meshList->push_back(new Sphere(glm::vec3(-5, 0, -15), glm::vec3(1.0f, 1.0f, 0), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	//	glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)));  // YELLOW SHPERE
+	//meshes[2]->surfaceMaterial = REFLECTION_AND_REFRACTION;
+	//meshes[2]->ior = 1.3f;
+	//																			  // TRIANGULAR MESH
+	//meshList->push_back(new Triangle(glm::vec3(-2, 6, -17), glm::vec3(2, 6, -15), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f))); // EMERALD TRIANGLE // u -> CAP
+	//meshList->push_back(new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f))); // v -> ABP
+	//meshList->push_back(new Triangle(glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0, 2, -15), glm::vec3(0.08f, 0.33f, 0.08f))); // w -> BCP
+	//meshList->push_back(new Triangle(glm::vec3(2, 6, -15), glm::vec3(-2, 6, -13), glm::vec3(-2, 6, -17), glm::vec3(0.08f, 0.33f, 0.08f))); // ABC -> base
+
+	//																															   // BOXES
+	//meshList->push_back(new Box(glm::vec3(-5, 3, -13), glm::vec3(-3, 5, -11), glm::vec3(0.20f, 0.20f, 1.0f)));
+	//meshList->push_back(new Box(glm::vec3(-7, -5, -15), glm::vec3(-3, -1, -11), glm::vec3(1.0f, 0.078f, 0.58f)));
+
+	//Sphere *mesh11 = new Sphere(glm::vec3(8, 3, -15), glm::vec3(0.1f, 0.1f, 1.0f), 2, glm::vec3(0.7f, 0.0f, 1.0f), glm::vec3(0.9f, 0.4f, 0.0f),
+	//	glm::vec3(0.0f, 0.9f, 0.4f), glm::vec3(0.9, 0.4, 0)); // blue sphere
+	//mesh11->surfaceMaterial = CHECKERBOARD;
+	//meshList->push_back(mesh11);
+
+	// set the idenfitier numbers
+	Mesh *tempMesh = nullptr;
+	int num = 0;
+	for (list<Mesh*>::iterator it = meshList->begin(); it != meshList->end(); ++it) {
+		tempMesh = &**it;
+		tempMesh->num = num;
+		num++;
 	}
 }
 
-void createLights(Light *Lights[]) {
-	lights[0] = new PointLight(glm::vec3(15, 20, -11), glm::vec3(1, 1, 1));
-	lights[1] = new DirLight(glm::vec3(-30, 30, -30), glm::vec3(1, 1, 1));
+void createLights(list<Light*> *lightList, int selector) {
+	if (selector == 1) {
+		lightList->push_back(new PointLight(glm::vec3(0, 20, -1), glm::vec3(0.5, 0.5, 0.5)));
+		lightList->push_back(new DirLight(glm::vec3(0, -1, 4), glm::vec3(1, 1, 1)));
+		lightList->push_back(new DirLight(glm::vec3(0, -1, 4), glm::vec3(0.2, 0.2, 0.2)));
+	}
+	else if (selector == 2) {
+		lightList->push_back(new PointLight(glm::vec3(1.44564, -0.485372, 0.808535), glm::vec3(1, 1, 1)));
+		lightList->push_back(new DirLight(glm::vec3(-0.710523, -0.810018, -7.16584), glm::vec3(1, 1, 1)));
+	}
+	/*lightList->push_back(new PointLight(glm::vec3(15, 20, -11), glm::vec3(1, 1, 1)));
+	lightList->push_back(new DirLight(glm::vec3(-30, 30, -30), glm::vec3(1, 1, 1)));*/
 }
 
 float mix(const float &a, const float &b, const float &mix)
@@ -166,33 +229,35 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 	// Here I need the BVH function to quickly determine if i need to traceRay or not
 	if (traceRay(_rayOrigin, _rayDirection, &tNear, hitMeshIndex, &hitMesh)) {
 		glm::vec3 p0 = _rayOrigin + _rayDirection * tNear;
-		glm::vec3 diffuseColour, specularColour;
-		int shininess = 0;  // get N, diffuse, specular and Shininess setup
-		glm::vec3 N = hitMesh->calNormal(&shininess, p0, &diffuseColour, &specularColour);
+		glm::vec3 N = hitMesh->calNormal(p0);
 		glm::vec3 tempP0 = p0;
 		switch (hitMesh->surfaceMaterial) {
-			default:
+			case DIFFUSE_AND_GLOSSY:
 			{
 				glm::vec3 lightAmount = glm::vec3(0);
 				// lights sizes
-				for (int i = 0; i < sizeof(lights) / sizeof(lights[0]); i++) {
+
+				Light *tempLight = nullptr;
+				int num = 0;
+				for (list<Light*>::iterator it = globalLightList->begin(); it != globalLightList->end(); ++it) {
+					tempLight = &**it;
 					glm::vec3 lightDirection = glm::vec3(0);
-					if (dynamic_cast<DirLight*>(lights[i]))
-						lightDirection = glm::normalize(lights[i]->pos);
+					if (dynamic_cast<DirLight*>(tempLight))
+						lightDirection = glm::normalize(tempLight->pos);
 					else
-						lightDirection = glm::normalize(lights[i]->pos - p0);
+						lightDirection = glm::normalize(tempLight->pos - p0);
 
 					// AMBIENT
-					glm::vec3 ambient = hitMesh->colour * glm::vec3(0.1, 0.1, 0.1);
+					glm::vec3 ambient = hitMesh->colour * hitMesh->ambientColour;
 					// DIFFUSE 
-					glm::vec3 diffuse = diffuseColour * lights[i]->intensity * glm::max(0.0f, glm::dot(lightDirection, N));
+					glm::vec3 diffuse = hitMesh->diffuseColour * tempLight->intensity * glm::max(0.0f, glm::dot(lightDirection, N));
 					// SPECULAR
 					glm::vec3 reflection = glm::normalize(2 * (glm::dot(lightDirection, N)) * N - lightDirection);
 					float maxCalc = glm::max(0.0f, glm::dot(reflection, glm::normalize(_rayOrigin - p0)));
-					glm::vec3 specular = specularColour * lights[i]->intensity * glm::pow(maxCalc, shininess);
+					glm::vec3 specular = hitMesh->specularColour * tempLight->intensity * glm::pow(maxCalc, hitMesh->shininess);
 					// DISTANCE ANNUTATION
-					float distance = glm::distance(lights[i]->pos, p0);
-					float attenuation = 1.0f / (0.005 + 0.0025*distance + 0.0010*distance*distance);
+					float distance = glm::distance(tempLight->pos, p0);
+					float attenuation = 1.0f / (options.constant_attenuation + options.linear_attenuation*distance + options.quadratic_attenuation*distance*distance);
 ;
 
 					float tNearShadow = INFINITY;
@@ -226,7 +291,7 @@ glm::vec3 castRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, i
 				glm::vec3 reflectionRayOrig = (glm::dot(reflectionDirection, N) < 0) ?
 					p0 + N * options.bias :
 					p0 - N * options.bias;
-				hitColour = (kr*13.0f) * castRay(reflectionRayOrig, reflectionDirection, depth + 1);
+				hitColour = (hitMesh->colour) * (kr*15.0f) * castRay(reflectionRayOrig, reflectionDirection, depth + 1);
 				break;
 			}
 			case REFLECTION_AND_REFRACTION:
@@ -255,14 +320,19 @@ bool traceRay(const glm::vec3 &_rayOrigin, const glm::vec3 &_rayDirection, float
 	*_hitMesh = nullptr;
 	float minT = INFINITY;
 	float t0 = 0.0f;
-	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++) {
-		bool hit = meshArr[i]->Intersection(_rayOrigin, _rayDirection, &t0);
+
+	Mesh *tempMesh = nullptr;
+	int index = 0;
+	for (list<Mesh*>::iterator it = globalMeshList->begin(); it != globalMeshList->end(); ++it) {
+		tempMesh = &**it;
+		bool hit = tempMesh->Intersection(_rayOrigin, _rayDirection, &t0);
 		if (hit && t0 < minT) {
-			*_hitMesh = meshArr[i];
+			*_hitMesh = tempMesh;
 			minT = t0;
 			*_t = t0;
-			_meshHitIndex = i;
+			_meshHitIndex = index;
 		}
+		index++;
 	}
 	return (*_hitMesh != nullptr);
 }
@@ -389,8 +459,19 @@ glm::vec3 Mesh::centroid() {
 	return this->pos;
 }
 
-glm::vec3 Mesh::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
+glm::vec3 Mesh::calNormal(glm::vec3 _p0) {
 	return N;
+}
+
+void Mesh::setSurfaceProperties(float _shininess, float _ior, glm::vec3 _diffuseColour, glm::vec3 _specularColour, glm::vec3 _ambientColour,
+	glm::vec3 _transmissive, glm::vec3 _reflectiveColour) {
+	this->shininess = _shininess;
+	this->ior = _ior;
+	this->diffuseColour = _diffuseColour;
+	this->specularColour = _specularColour;
+	this->ambientColour = _ambientColour;
+	this->transmissive = _transmissive;
+	this->reflectiveColour = _reflectiveColour;
 }
 
 float Mesh::getMaxX() { return this->pos.x; }
@@ -413,15 +494,10 @@ Sphere::Sphere(void) {
 	colour = glm::vec3(0, 0, 0);
 }
 
-Sphere::Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius, glm::vec3 _diffuseColour,
-	glm::vec3 _specularColour, glm::vec3 _reflectiveColour, glm::vec3 _transmissive) {
+Sphere::Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius) {
 	pos = _pos;
 	colour = _colour;
 	radius = _radius;
-	diffuseColour = _diffuseColour;
-	specularColour = _specularColour;
-	reflectiveColour = _reflectiveColour;
-	transmissive = _transmissive;
 }
 
 //======================================================================================
@@ -455,10 +531,7 @@ glm::vec3 Sphere::centroid() {
 	return this->pos;
 }
 
-glm::vec3 Sphere::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 155;  // to give a glow effect
-	*_diffuse = colour;
-	*_specular = glm::vec3(0.8, 0.8, 0.8);
+glm::vec3 Sphere::calNormal(glm::vec3 _p0) {
 	N = glm::normalize(_p0 - pos);
 	return N;
 }
@@ -583,11 +656,7 @@ glm::vec3 getNormal( Triangle *triangle ) {
 	return glm::vec3(triNormX, triNormY, triNormZ);
 }
 
-glm::vec3 Triangle::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 100;
-	*_diffuse = colour;
-	*_specular = glm::vec3(0.5,0.5, 0.5);
-
+glm::vec3 Triangle::calNormal(glm::vec3 _p0) {
 	float normalX = getNormalX(this->a, this->b, this->c);
 	float normalY = getNormalY(this->a, this->b, this->c);
 	float normalZ = getNormalZ(this->a, this->b, this->c);
@@ -677,10 +746,7 @@ bool Box::Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t)
 	return true;
 }
 
-glm::vec3 Box::calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular) {
-	*_shininess = 50;  // to give a glow effect
-	*_diffuse = colour;
-	*_specular = glm::vec3(0.8, 0.8, 0.8);
+glm::vec3 Box::calNormal(glm::vec3 _p0) {
 	N = getNormalPlane(_p0);
 	return N;
 }
@@ -796,8 +862,12 @@ BVH::BVH(void) {
 //   this function initates BVH structure and set the root node.
 //===============================================================================
 void BVH::initiateBVH() {
-	for (int i = 0; i < sizeof(meshArr) / sizeof(meshArr[0]); i++)
-		this->root->addMesh(meshArr[i]);
+	Mesh *tempMesh = nullptr;
+	int index = 0;
+	for (list<Mesh*>::iterator it = globalMeshList->begin(); it != globalMeshList->end(); ++it) {
+		tempMesh = &**it;
+		this->root->addMesh(tempMesh);
+	}
 }
 
 //===============================================================================

@@ -9,6 +9,7 @@ struct Options {
 	float fov = 90, bias = 1e-5f;
 	int maxDepth = 5;
 	glm::vec3 backgroundColour = glm::vec3(0.78, 0.67, 0.65);
+	float constant_attenuation = 0, linear_attenuation = 0, quadratic_attenuation = 1;
 };
 
 
@@ -63,15 +64,17 @@ glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);
 class Mesh {
 public:
 	int num;
-	glm::vec3 pos, colour, N, diffuseColour, specularColour, reflectiveColour, transmissive;
-	float Kd, Ks, specularExponent, ior;
+	glm::vec3 pos, colour, N, diffuseColour, specularColour, reflectiveColour, transmissive, ambientColour;
+	float Kd, Ks, specularExponent, ior, shininess;
 	SurfaceMaterial surfaceMaterial;
 	Mesh(void);
 	Mesh(glm::vec3 _position, glm::vec3 _colour, glm::vec3 _N);
 
 	virtual bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	virtual glm::vec3 centroid();
-	virtual glm::vec3 calNormal(int *shininess, glm::vec3 _p0, glm::vec3 *diffuse, glm::vec3 *specular);
+	virtual glm::vec3 calNormal(glm::vec3 _p0);
+	virtual void setSurfaceProperties(float _shininess, float _ior, glm::vec3 _diffuseColour, glm::vec3 _specularColour, glm::vec3 _ambientColour,
+		glm::vec3 _transmissive, glm::vec3 _reflectiveColour);
 
 	virtual float getMinX();
 	virtual float getMinY();
@@ -90,11 +93,10 @@ class Sphere : public Mesh {
 public:
 	float radius;
 	Sphere(void);
-	Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius, glm::vec3 _diffuseColour, 
-			glm::vec3 _specularColour, glm::vec3 _reflectiveColour, glm::vec3 _transmissive);
+	Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 centroid();
-	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+	glm::vec3 calNormal(glm::vec3 _p0);
 	void getSurfaceData(glm::vec3 p0, glm::vec3 *_N, glm::vec2 *tex);
 
 	float getMinX();
@@ -118,7 +120,7 @@ public:
 	Triangle(glm::vec3 _a, glm::vec3 _b, glm::vec3 _c, glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
 	glm::vec3 centroid();
-	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+	glm::vec3 calNormal(glm::vec3 _p0);
 
 	float getMinX();
 	float getMinY();
@@ -139,7 +141,7 @@ public:
 	Box(void);
 	Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
-	glm::vec3 calNormal(int *_shininess, glm::vec3 _p0, glm::vec3 *_diffuse, glm::vec3 *_specular);
+	glm::vec3 calNormal(glm::vec3 _p0);
 	glm::vec3 getNormalPlane(glm::vec3 _p0);
 	glm::vec3 getbBounds() { return *this->bounds; }
 	glm::vec3 centroid();
@@ -219,9 +221,10 @@ public:
 
 // to render the scene.
 bool bvhSwitch();
+int sceneSelector();
 void renderSI(void *window, int width, int height);
-void createMeshes(Mesh *meshes[]);
-void createLights(Light *Lights[]);
+void createMeshes(list<Mesh*> *meshList, int selector);
+void createLights(list<Light*> *lightList, int selector);
 void fresnel(const glm::vec3 _I, const glm::vec3 _N, const float *ior, float *kr);
 glm::vec3 refract(const glm::vec3 &_I, const glm::vec3 &_N, const float *ior);
 glm::vec3 reflect(const glm::vec3 _I, const glm::vec3 _N);

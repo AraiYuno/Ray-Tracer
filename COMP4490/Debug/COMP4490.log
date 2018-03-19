@@ -1,198 +1,41 @@
 ﻿  example.cpp
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(9): error C2011: 'Options': 'struct' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(9): note: see declaration of 'Options'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(28): error C2011: 'SurfaceMaterial': 'enum' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(28): note: see declaration of 'SurfaceMaterial'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(35): error C2011: 'Light': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(35): note: see declaration of 'Light'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(43): error C2011: 'PointLight': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(43): note: see declaration of 'PointLight'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(50): error C2011: 'DirLight': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(50): note: see declaration of 'DirLight'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(65): error C2011: 'Mesh': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(65): note: see declaration of 'Mesh'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): error C2011: 'Sphere': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): error C2011: 'Triangle': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): error C2011: 'Box': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(166): error C2011: 'ShadowAtt': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(166): note: see declaration of 'ShadowAtt'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(175): error C2011: 'Node': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(175): note: see declaration of 'Node'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(188): error C2011: 'BVH': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(188): note: see declaration of 'BVH'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(204): error C2011: 'Checkerboard': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(204): note: see declaration of 'Checkerboard'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(16): error C2079: 'options' uses undefined struct 'Options'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(43): error C2027: use of undefined type 'BVH'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(188): note: see declaration of 'BVH'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(82): error C2228: left of '.fov' must have class/struct/union
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(82): note: type is 'int'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(82): error C2672: 'glm::radians': no matching overloaded function found
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(83): error C2228: left of '.fov' must have class/struct/union
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(83): note: type is 'int'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(83): error C2672: 'glm::radians': no matching overloaded function found
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(87): error C2228: left of '.backgroundColour' must have class/struct/union
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(87): note: type is 'int'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(90): error C2027: use of undefined type 'BVH'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(188): note: see declaration of 'BVH'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(90): error C2227: left of '->findIntersection' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(90): error C2227: left of '->root' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(98): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(132): error C2228: left of '.fov' must have class/struct/union
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(132): note: type is 'int'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(133): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(134): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(134): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(134): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(137): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(138): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(138): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(138): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(139): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(139): error C2227: left of '->surfaceMaterial' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(142): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(143): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(143): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(143): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(144): error C2027: use of undefined type 'Box'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(144): error C2227: left of '->surfaceMaterial' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(149): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(150): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(150): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(150): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(153): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(154): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(154): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(154): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(157): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(158): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(158): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(158): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(159): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(159): error C2227: left of '->surfaceMaterial' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(162): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(163): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(163): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(163): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(164): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(164): error C2227: left of '->surfaceMaterial' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(167): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(168): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(168): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(168): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(169): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(169): error C2227: left of '->surfaceMaterial' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(173): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(174): error C2027: use of undefined type 'Sphere'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(174): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(174): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(177): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(178): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(178): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(178): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(181): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(182): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(182): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(182): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(185): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(186): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(186): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(186): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(189): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(190): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(190): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(190): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(193): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(194): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(194): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(194): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(197): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(198): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(198): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(198): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(201): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(202): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(202): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(202): error C2227: left of '->colour' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(205): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(206): error C2027: use of undefined type 'Triangle'
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(206): error C2227: left of '->setSurfaceProperties' must point to class/struct/union/generic type
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(206): fatal error C1003: error count exceeds 100; stopping compilation
-  a1main.cpp
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(9): error C2011: 'Options': 'struct' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(9): note: see declaration of 'Options'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(28): error C2011: 'SurfaceMaterial': 'enum' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(28): note: see declaration of 'SurfaceMaterial'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(35): error C2011: 'Light': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(35): note: see declaration of 'Light'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(43): error C2011: 'PointLight': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(43): note: see declaration of 'PointLight'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(50): error C2011: 'DirLight': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(50): note: see declaration of 'DirLight'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(65): error C2011: 'Mesh': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(65): note: see declaration of 'Mesh'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): error C2011: 'Sphere': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(93): note: see declaration of 'Sphere'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): error C2011: 'Triangle': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(116): note: see declaration of 'Triangle'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): error C2011: 'Box': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(139): note: see declaration of 'Box'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(166): error C2011: 'ShadowAtt': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(166): note: see declaration of 'ShadowAtt'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(175): error C2011: 'Node': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(175): note: see declaration of 'Node'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(188): error C2011: 'BVH': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(188): note: see declaration of 'BVH'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(204): error C2011: 'Checkerboard': 'class' type redefinition
-  c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\a1main.h(204): note: see declaration of 'Checkerboard'
-  Generating Code...
-  Compiling...
-  UIStarter.cpp
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\comp4490\uistarter.cpp(52): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\comp4490\uistarter.cpp(56): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\comp4490\uistarter.cpp(61): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\comp4490\uistarter.cpp(66): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\comp4490\uistarter.cpp(67): warning C4305: 'argument': truncation from 'double' to 'float'
-  Generating Code...
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(104): warning C4244: 'argument': conversion from 'float' to 'unsigned char', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(159): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(163): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(168): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(173): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(174): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(240): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(241): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(245): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(249): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(253): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(258): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(268): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(269): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(398): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(418): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(525): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(526): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(532): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(533): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(585): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(586): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(588): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(597): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(598): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(600): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(693): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(694): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(739): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(751): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(740): warning C4101: 'u1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(740): warning C4101: 'v1': unreferenced local variable
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1178): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1230): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1230): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1237): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1239): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1247): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+c:\users\owner\desktop\school\comp 4490\a1\comp4490a1\comp4490\src\example.cpp(1247): warning C4305: 'initializing': truncation from 'double' to 'float'
+  COMP4490.vcxproj -> C:\Users\Owner\Desktop\School\COMP 4490\A1\comp4490a1\comp4490\build\comp4490.exe

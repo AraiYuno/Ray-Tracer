@@ -91,15 +91,33 @@
     <ClInclude Include="..\src\a1main.h" />
     <ClInclude Include="..\src\vc\stdafx.h" />
     <ClInclude Include="..\src\vc\targetver.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="BVH.h" />
+    <ClInclude Include="DirLight.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="sphere.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="PointLight.h" />
+    <ClInclude Include="RayTracer.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="UIStarter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\a1main.cpp" />
     <ClCompile Include="..\src\example.cpp" />
     <ClCompile Include="..\src\vc\stdafx.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BVH.cpp" />
+    <ClCompile Include="DirLight.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="sphere.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="RayTracer.cpp" />
+    <ClCompile Include="Sphere.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="UIStarter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,19 +1,21 @@
 #pragma once
 #include "Mesh.h"
 
+
 //======================================================================
-// Sphere Intersection
-//    Code for sphere intersection
+// Box Intersection
+//    Code for Box Intersection
 //======================================================================
-class Sphere : public Mesh {
+class Box : public Mesh {
 public:
-	float radius;
-	Sphere(void);
-	Sphere(glm::vec3 _pos, glm::vec3 _colour, float _radius);
+	glm::vec3 bounds[2];
+	Box(void);
+	Box(glm::vec3  b0, glm::vec3  b1, glm::vec3 _colour);
 	bool Intersection(glm::vec3 _rayOrigin, glm::vec3 _rayDirection, float *t);
-	glm::vec3 centroid();
 	glm::vec3 calNormal(glm::vec3 _p0);
-	void getSurfaceData(glm::vec3 p0, glm::vec3 *_N, glm::vec2 *tex);
+	glm::vec3 getNormalPlane(glm::vec3 _p0);
+	glm::vec3 getbBounds() { return *this->bounds; }
+	glm::vec3 centroid();
 
 	float getMinX();
 	float getMinY();
@@ -22,4 +24,3 @@ public:
 	float getMaxY();
 	float getMaxZ();
 };
-

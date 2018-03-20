@@ -14,6 +14,7 @@ struct Options {
 	float fov = 90, bias = 1e-5f;
 	int maxDepth = 5;
 	glm::vec3 backgroundColour = glm::vec3(0.8f);
+	float cameraPosX = 0, cameraPosY = 0, cameraPosZ = 0;
 	float constant_attenuation = 0, linear_attenuation = 0, quadratic_attenuation = 1;
 };
 
@@ -255,3 +256,4 @@ Box *createBox(float point[3], float scale, glm::vec3 _colour);
 
 void createShell(list<Mesh*> *meshList);
 void createhitchcock(list<Mesh*> *meshList);
+void createTrimesh1(list<Mesh*> *meshList);

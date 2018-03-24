@@ -1,5 +1,5 @@
 # Ray-Tracer
-C++ Ray Tracing coding
+C++ Ray Tracing coding. I am currently looking forward to restructing all the codes. It's an open source code. Please feel free to use it as you want.
 
 ## 1. Sphere Intersection
 Completed
